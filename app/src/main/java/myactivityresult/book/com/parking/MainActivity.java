@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -20,8 +19,8 @@ public class MainActivity extends AppCompatActivity {
     GridView gridView;
     TextView TotalSpace, AvailableSpace;
     SharedPreferences pref;
-    Handler mHandler;
     HttpURLConnector conn;
+    emptySpace empty_space;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,39 +85,10 @@ public class MainActivity extends AppCompatActivity {
             editor.commit();
         }
 
-        /*
-         핸들러 생성
-        mHandler = new Handler() {
-            public void handleMessage(Message msg) {
-                switch (msg.what) {
-                }
-            }
-        };
-         서버와 지속적으로 통신해서 칸 현황 파악하는 스레드
-        SpaceCountThread = new Thread(){
-            public void run(){
-                while(true) {
-                    try {
-                        try {
-                            Thread.sleep(2000);
-                        }
-                        catch (Exception ex) {
-                        }
-                        mHandler.sendMessage(Message.obtain(mHandler, 0));
-                    }
-                    catch(Exception exTemp) {
-                        Log.e("", exTemp.toString());
-                    }
-                    String total="전체 칸 : ", available="여유 칸 : ";
-                    TotalSpace = (TextView) findViewById(R.id.TotalSpace);
-                    AvailableSpace = (TextView) findViewById(R.id.AvailableSpace);
-                    TotalSpace.setText(total);
-                    AvailableSpace.setText(available);
-                }
-            }
-        };
-        SpaceCountThread.start();
-        */
+        TotalSpace = (TextView)findViewById(R.id.TotalSpace);
+        AvailableSpace = (TextView)findViewById(R.id.AvailableSpace);
+        conn.connect();
+        empty_space = new emptySpace(AvailableSpace, conn);
     }
 
     @Override
