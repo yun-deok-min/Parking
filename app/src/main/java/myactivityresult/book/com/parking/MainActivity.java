@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences pref;
     HttpURLConnector conn;
     emptySpace empty_space;
+    // 화면 비율 조정 클래스
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
