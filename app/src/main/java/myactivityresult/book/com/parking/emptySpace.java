@@ -28,7 +28,7 @@ public class emptySpace extends Thread {
                 }
             });
             try{
-                Thread.sleep(5000);
+                Thread.sleep(5000); // 빈 공간 갱신 주기
             } catch(InterruptedException e){
                 Log.d("Exception","InterruptedException");
             }
