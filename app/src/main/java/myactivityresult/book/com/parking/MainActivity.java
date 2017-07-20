@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
             editor.commit();
         }
 
-        TotalSpace = (TextView)findViewById(R.id.TotalSpace);
+        TotalSpace = (TextView)findViewById(R.id.TotalSpace); // 고정값?
         AvailableSpace = (TextView)findViewById(R.id.AvailableSpace);
         conn.connect();
         empty_space = new emptySpace(AvailableSpace, conn);
