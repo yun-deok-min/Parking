@@ -1,6 +1,7 @@
 package myactivityresult.book.com.parking;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -20,11 +21,15 @@ public class CalculateFare extends AppCompatActivity {
     private String result; // DB 데이터
     private ArrayList<String> str_arr;  // 차량 번호
     private ArrayList<String> StartTime_arr;  // 입차시간
+    HttpURLConnector conn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calculate_fare);
+
+        Intent intent = getIntent();
+        conn = (HttpURLConnector)intent.getSerializableExtra("conn");
 
         /* 차량 번호가 등록되어 있으면 자동으로 표시하고 입차 시간도 보여줌 */
         SharedPreferences pref = getSharedPreferences("save01", Activity.MODE_PRIVATE);
@@ -80,14 +85,6 @@ public class CalculateFare extends AppCompatActivity {
         // 서버에 차번호를 보내서 디비에서 해당 차의 입차시간을 확인해서 서버가 앱에게 입차시간을 전송해서 보여줌
         EdtStartHour = (EditText)findViewById(R.id.EdtStartHour);
         EdtStartMinute = (EditText)findViewById(R.id.EdtStartMinute);
-
-        //HttpURLConnector conn = new HttpURLConnector(url);
-        //conn.start();
-
-        //try{
-           // conn.join();
-          //  result = conn.getResult();
-       // } catch(Exception e){ }
 
         /*
         JSONParser jsonParser = new JSONParser(result);

@@ -25,7 +25,8 @@ public class HttpURLConnector implements Serializable {
             if (res_code == HttpURLConnection.HTTP_OK) {
                 /*StatusLine statusLine = response.getStatusLine();
                 statusLine.getStatusCode() == 200이면 서버와 정상적으로 연결된 것*/
-                PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(conn.getOutputStream())), true);
+                PrintWriter writer = new PrintWriter(new BufferedWriter(
+                        new OutputStreamWriter(conn.getOutputStream())), true);
 
                 switch (select) {
                     case 1:

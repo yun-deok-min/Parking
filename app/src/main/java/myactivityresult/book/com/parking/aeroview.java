@@ -1,5 +1,6 @@
 package myactivityresult.book.com.parking;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -17,11 +18,15 @@ public class aeroview extends AppCompatActivity {
     Spinner floor;
     private boolean initSpinner = false;
     ArrayList<String> FloorData;
+    HttpURLConnector conn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_aeroview);
+
+        Intent intent = getIntent();
+        conn = (HttpURLConnector)intent.getSerializableExtra("conn");
 
         AeroView = (WebView)findViewById(R.id.AeroView);
         floor = (Spinner)findViewById(R.id.floor);

@@ -37,20 +37,24 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent;
 
                 switch (position){
-                    case 0 :
+                    case 0 :  // 조감도 아이콘
                         intent = new Intent(getApplicationContext(), aeroview.class);
+                        intent.putExtra("conn",conn);
                         startActivity(intent);
                         break;
-                    case 1 :
+                    case 1 :  // 요금 계산 아이콘
                         intent = new Intent(getApplicationContext(), CalculateFare.class);
+                        intent.putExtra("conn",conn);
                         startActivity(intent);
                         break;
-                    case 2 :
+                    case 2 :  // 내 차량 위치 검색 아이콘
                         intent = new Intent(getApplicationContext(), MyCarPosition.class);
+                        intent.putExtra("conn",conn);
                         startActivity(intent);
                         break;
-                    case 3 :
+                    case 3 :  // 차량 번호 등록 아이콘
                         intent = new Intent(getApplicationContext(), Enrollment.class);
+                        intent.putExtra("conn",conn);
                         startActivity(intent);
                         break;
                     default :
