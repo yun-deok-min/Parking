@@ -55,6 +55,7 @@ public class aeroview extends AppCompatActivity {
                 switch (position){
                     case 0 :  // 1층 조감도
                         AeroView.loadUrl("https://www.naver.com/");
+                        // conn.result() 로 처리할 수 도 있음
                         break;
                     case 1 :  // 2층 조감도
                         AeroView.loadUrl("https://www.google.co.kr/");

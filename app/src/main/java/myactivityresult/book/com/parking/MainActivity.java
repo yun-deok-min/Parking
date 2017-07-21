@@ -9,6 +9,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
@@ -21,12 +22,19 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences pref;
     HttpURLConnector conn;
     emptySpace empty_space;
-    // 화면 비율 조정 클래스
+    ScreenRate screen_rate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        int ScreenWidth = getWindowManager().getDefaultDisplay().getWidth();
+        int ScreenHeight = getWindowManager().getDefaultDisplay().getHeight();
+        screen_rate = new ScreenRate(ScreenWidth, ScreenHeight);
+        screen_rate.setSize(100, 100);
 
         gridView = (GridView)findViewById(R.id.gridView01);
         gridView.setAdapter(new ImageAdapter(this));
@@ -101,51 +109,54 @@ public class MainActivity extends AppCompatActivity {
         conn.End();  // 앱 종료되면 서버와 연결 종료
         super.onDestroy();
     }
-}
 
-class ImageAdapter extends BaseAdapter{
-    private Integer[] FunctionImage = {
-            R.drawable.aeroview, R.drawable.calculate_fare,
-            R.drawable.car_position, R.drawable.enrollment};
+    class ImageAdapter extends BaseAdapter{
+        private Integer[] FunctionImage = {
+                R.drawable.aeroview, R.drawable.calculate_fare,
+                R.drawable.car_position, R.drawable.enrollment};
 
-    Context mContext;
+        Context mContext;
 
-    public ImageAdapter(Context context){
-        mContext = context;
-        // MainActivity 클래스에게 이미지뷰를 넘겨줘야 하기에 Context 를 받아옴
-    }
-
-    @Override
-    public int getCount(){
-        return FunctionImage.length;  // 이미지 총 개수
-    }
-
-    @Override
-    public Object getItem(int position){
-        return null;
-    }
-
-    @Override
-    public long getItemId(int position){
-        return 0;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent){
-        ImageView imageView;
-        if(convertView == null){
-            imageView = new ImageView(mContext);
-            imageView.setLayoutParams(new GridView.LayoutParams(600, 600)); // 이미지 뷰 세로, 가로
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP); // 이미지 자체 size 조정 및 이동
-            imageView.setPadding(8,8,8,8);  // 상하좌우 여백
-        }
-        else{
-            imageView = (ImageView) convertView;
+        public ImageAdapter(Context context){
+            mContext = context;
+            // MainActivity 클래스에게 이미지뷰를 넘겨줘야 하기에 Context 를 받아옴
         }
 
-        imageView.setImageResource(FunctionImage[position]);
+        @Override
+        public int getCount(){
+            return FunctionImage.length;  // 이미지 총 개수
+        }
 
-        return imageView;
+        @Override
+        public Object getItem(int position){
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position){
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent){
+            ImageView imageView;
+            if(convertView == null){
+                imageView = new ImageView(mContext);
+                imageView.setLayoutParams(new GridView.LayoutParams(
+                        screen_rate.getY(35), screen_rate.getX(35))); // 아이콘 이미지 세로, 가로
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP); // 이미지 자체 size 조정 및 이동
+                imageView.setPadding(8,8,8,8);  // 상하좌우 여백
+            }
+            else{
+                imageView = (ImageView) convertView;
+            }
+
+            imageView.setImageResource(FunctionImage[position]);
+
+            return imageView;
+        }
     }
 }
+
+
 

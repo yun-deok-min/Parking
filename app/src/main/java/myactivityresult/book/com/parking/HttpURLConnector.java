@@ -29,18 +29,21 @@ public class HttpURLConnector implements Serializable {
                         new OutputStreamWriter(conn.getOutputStream())), true);
 
                 switch (select) {
-                    case 1:
+                    case 1:  // 시작화면, 빈공간 파악
                         writer.print("GET 'cars/:numbering'");
                         writer.close();
                         break;
-                    case 2:
+                    case 2:  // 조감도 화면
                         writer.print("GET 'entering_logs?car_numbering=:car_numbering'");
                         writer.close();
                         break;
-                    case 3:
+                    case 3:  // 요금 계산 화면, 입차시간 파악
                         writer.print("GET 'places'");
                         writer.close();
                         break;
+                    case 4 :  // 내 차 위치 화면, 차량 위치 파악
+                        writer.print("");
+                        writer.close();
                 }
 
                 BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
