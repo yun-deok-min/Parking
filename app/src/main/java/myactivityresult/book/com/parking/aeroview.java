@@ -1,6 +1,5 @@
 package myactivityresult.book.com.parking;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -25,9 +24,6 @@ public class aeroview extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_aeroview);
 
-        Intent intent = getIntent();
-        conn = (HttpURLConnector)intent.getSerializableExtra("conn");
-
         AeroView = (WebView)findViewById(R.id.AeroView);
         floor = (Spinner)findViewById(R.id.floor);
 
@@ -45,20 +41,24 @@ public class aeroview extends AppCompatActivity {
         floor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id){
+                String url="https://";  // 기본 API 주소
+
                 if(initSpinner == false){
                     initSpinner = true;
                     floor.setSelection(0);       // 1층을 디폴트 값으로
-                    AeroView.loadUrl("https://www.naver.com/");
+                    conn = new HttpURLConnector(url); // 1층 구분 표시 추가
+                    conn.connect();
                     return;
                 }
 
                 switch (position){
                     case 0 :  // 1층 조감도
-                        AeroView.loadUrl("https://www.naver.com/");
-                        // conn.result() 로 처리할 수 도 있음
+                        conn = new HttpURLConnector(url); // 1층 구분 표시 추가
+                        conn.connect();
                         break;
                     case 1 :  // 2층 조감도
-                        AeroView.loadUrl("https://www.google.co.kr/");
+                        conn = new HttpURLConnector(url); // 2층 구분 표시 추가
+                        conn.connect();
                         break;
                     default :
                         break;

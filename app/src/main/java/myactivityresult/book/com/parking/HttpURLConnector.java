@@ -1,16 +1,12 @@
 package myactivityresult.book.com.parking;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class HttpURLConnector implements Serializable {
+public class HttpURLConnector {
     private String url_str;
     private HttpURLConnection conn;
 
@@ -18,34 +14,24 @@ public class HttpURLConnector implements Serializable {
         this.url_str = url_str;
     }
 
-    public String result(int select) {
+    public String connect() {
+        try {
+            URL url = new URL(url_str);
+            conn = (HttpURLConnection) url.openConnection();
+
+            if (conn != null) {
+                conn.setDoInput(true);
+                conn.setConnectTimeout(10000);
+                conn.setRequestMethod("GET");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         StringBuilder sb = new StringBuilder();
         try {
             int res_code = conn.getResponseCode();
             if (res_code == HttpURLConnection.HTTP_OK) {
-                /*StatusLine statusLine = response.getStatusLine();
-                statusLine.getStatusCode() == 200이면 서버와 정상적으로 연결된 것*/
-                PrintWriter writer = new PrintWriter(new BufferedWriter(
-                        new OutputStreamWriter(conn.getOutputStream())), true);
-
-                switch (select) {
-                    case 1:  // 시작화면, 빈공간 파악
-                        writer.print("GET 'cars/:numbering'");
-                        writer.close();
-                        break;
-                    case 2:  // 조감도 화면
-                        writer.print("GET 'entering_logs?car_numbering=:car_numbering'");
-                        writer.close();
-                        break;
-                    case 3:  // 요금 계산 화면, 입차시간 파악
-                        writer.print("GET 'places'");
-                        writer.close();
-                        break;
-                    case 4 :  // 내 차 위치 화면, 차량 위치 파악
-                        writer.print("");
-                        writer.close();
-                }
-
                 BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 String line = null;
                 while (true) {
@@ -60,25 +46,5 @@ public class HttpURLConnector implements Serializable {
             e.printStackTrace();
         }
         return sb.toString();
-    }
-
-    public void connect() {
-        try {
-            URL url = new URL(url_str);
-            conn = (HttpURLConnection) url.openConnection();
-
-            if (conn != null) {
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
-                conn.setConnectTimeout(10000);
-                conn.setRequestMethod("POST");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void End(){
-        conn.disconnect();
     }
 }

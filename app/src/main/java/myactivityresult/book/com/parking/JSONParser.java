@@ -14,7 +14,6 @@ public class JSONParser {
     private ArrayList<Integer> zone_index;
     private ArrayList<Integer> floor;
     private ArrayList<Integer> id;
-    private ArrayList<Integer> end_at;
     private int empty_space;
 
     public JSONParser(String dbStr){

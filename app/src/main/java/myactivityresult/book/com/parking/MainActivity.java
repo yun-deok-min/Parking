@@ -21,7 +21,6 @@ public class MainActivity extends AppCompatActivity {
     GridView gridView;
     TextView TotalSpace, AvailableSpace;
     SharedPreferences pref;
-    HttpURLConnector conn;
     emptySpace empty_space;
     ScreenRate screen_rate;
 
@@ -43,8 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
         TotalSpace = (TextView)findViewById(R.id.TotalSpace); // 고정값?
         AvailableSpace = (TextView)findViewById(R.id.AvailableSpace);
-        conn.connect();
-        empty_space = new emptySpace(AvailableSpace, conn);
+        empty_space = new emptySpace(AvailableSpace);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -54,22 +52,18 @@ public class MainActivity extends AppCompatActivity {
                 switch (position){
                     case 0 :  // 조감도 아이콘
                         intent = new Intent(getApplicationContext(), aeroview.class);
-                        intent.putExtra("conn",conn);
                         startActivity(intent);
                         break;
                     case 1 :  // 요금 계산 아이콘
                         intent = new Intent(getApplicationContext(), CalculateFare.class);
-                        intent.putExtra("conn",conn);
                         startActivity(intent);
                         break;
                     case 2 :  // 내 차량 위치 검색 아이콘
                         intent = new Intent(getApplicationContext(), MyCarPosition.class);
-                        intent.putExtra("conn",conn);
                         startActivity(intent);
                         break;
                     case 3 :  // 차량 번호 등록 아이콘
                         intent = new Intent(getApplicationContext(), Enrollment.class);
-                        intent.putExtra("conn",conn);
                         startActivity(intent);
                         break;
                     default :
@@ -104,12 +98,6 @@ public class MainActivity extends AppCompatActivity {
             editor.putBoolean("hasVisited", true);
             editor.commit();
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        conn.End();  // 앱 종료되면 서버와 연결 종료
-        super.onDestroy();
     }
 
     class ImageAdapter extends BaseAdapter{

@@ -7,17 +7,19 @@ import android.widget.TextView;
 public class emptySpace extends Thread {
     private TextView empty;
     private HttpURLConnector conn;
+    private String StrEmptySpace;
     private int emptySpace;
 
-    public emptySpace(TextView empty, HttpURLConnector conn){
+    public emptySpace(TextView empty){
         this.empty = empty;
-        this.conn = conn;
     }
 
     public void run(){
         while(true) {
-            String emptyStr = conn.result(1); // select 1번이 남은 공간을 표시할 경우
-            JSONParser parser = new JSONParser(emptyStr);
+            String url = "https://"; // 여유 칸 보내주는 API 주소 나중에 추가
+            conn = new HttpURLConnector(url);
+            StrEmptySpace = conn.connect();
+            JSONParser parser = new JSONParser(StrEmptySpace);
             emptySpace = parser.getEmpty_space();
 
             Handler handler = new Handler();
