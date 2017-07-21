@@ -4,12 +4,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
@@ -29,15 +30,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        int ScreenWidth = getWindowManager().getDefaultDisplay().getWidth();
-        int ScreenHeight = getWindowManager().getDefaultDisplay().getHeight();
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int ScreenWidth = size.x;
+        int ScreenHeight = size.y;
         screen_rate = new ScreenRate(ScreenWidth, ScreenHeight);
         screen_rate.setSize(100, 100);
 
         gridView = (GridView)findViewById(R.id.gridView01);
         gridView.setAdapter(new ImageAdapter(this));
+
+        TotalSpace = (TextView)findViewById(R.id.TotalSpace); // 고정값?
+        AvailableSpace = (TextView)findViewById(R.id.AvailableSpace);
+        conn.connect();
+        empty_space = new emptySpace(AvailableSpace, conn);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -97,11 +104,6 @@ public class MainActivity extends AppCompatActivity {
             editor.putBoolean("hasVisited", true);
             editor.commit();
         }
-
-        TotalSpace = (TextView)findViewById(R.id.TotalSpace); // 고정값?
-        AvailableSpace = (TextView)findViewById(R.id.AvailableSpace);
-        conn.connect();
-        empty_space = new emptySpace(AvailableSpace, conn);
     }
 
     @Override
@@ -143,9 +145,9 @@ public class MainActivity extends AppCompatActivity {
             if(convertView == null){
                 imageView = new ImageView(mContext);
                 imageView.setLayoutParams(new GridView.LayoutParams(
-                        screen_rate.getY(35), screen_rate.getX(35))); // 아이콘 이미지 세로, 가로
+                        screen_rate.getX(50), screen_rate.getY(30))); // 아이콘 이미지 가로, 세로
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP); // 이미지 자체 size 조정 및 이동
-                imageView.setPadding(8,8,8,8);  // 상하좌우 여백
+                imageView.setPadding(10,10,10,10);  // 상하좌우 여백
             }
             else{
                 imageView = (ImageView) convertView;
@@ -157,6 +159,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 }
+
 
 
 
