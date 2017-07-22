@@ -40,10 +40,6 @@ public class MainActivity extends AppCompatActivity {
         gridView = (GridView)findViewById(R.id.gridView01);
         gridView.setAdapter(new ImageAdapter(this));
 
-        TotalSpace = (TextView)findViewById(R.id.TotalSpace); // 고정값?
-        AvailableSpace = (TextView)findViewById(R.id.AvailableSpace);
-        empty_space = new emptySpace(AvailableSpace);
-
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -98,6 +94,11 @@ public class MainActivity extends AppCompatActivity {
             editor.putBoolean("hasVisited", true);
             editor.commit();
         }
+
+        TotalSpace = (TextView)findViewById(R.id.TotalSpace); // 고정값?
+        AvailableSpace = (TextView)findViewById(R.id.AvailableSpace);
+        empty_space = new emptySpace(AvailableSpace);
+        empty_space.start();
     }
 
     class ImageAdapter extends BaseAdapter{
@@ -109,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
 
         public ImageAdapter(Context context){
             mContext = context;
-            // MainActivity 클래스에게 이미지뷰를 넘겨줘야 하기에 Context 를 받아옴
         }
 
         @Override

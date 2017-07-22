@@ -4,27 +4,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-
 public class JSONParser {
     private String dbStr;
-    private ArrayList<String> numbering;
-    private ArrayList<Integer> start_at;
-    private ArrayList<String> zone_name;
-    private ArrayList<Integer> zone_index;
-    private ArrayList<Integer> floor;
-    private ArrayList<Integer> id;
+    private String numbering;
+    private int start_at;
+    private String zone_name;
+    private int zone_index;
+    private int floor;
     private int empty_space;
 
     public JSONParser(String dbStr){
         this.dbStr = dbStr;
-        numbering = new ArrayList<>();
-        start_at = new ArrayList<>();
-        zone_name = new ArrayList<>();
-        zone_index = new ArrayList<>();
-        floor = new ArrayList<>();
-        id = new ArrayList<>();
-        end_at = new ArrayList<>();
         empty_space = 0;
     }
 
@@ -37,35 +27,22 @@ public class JSONParser {
                     JSONArray array = json.getJSONArray("car");
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject result = array.getJSONObject(i);
-                        numbering.add(result.getString("numbering"));
-                        start_at.add(result.getInt("start_at"));
+                        numbering = result.getString("numbering");
+                        start_at = result.getInt("start_at");
                     }
                     array = json.getJSONArray("place");
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject result = array.getJSONObject(i);
-                        zone_name.add(result.getString("zone_name"));
-                        zone_index.add(result.getInt("zone_index"));
-                        floor.add(result.getInt("floor"));
+                        zone_name = result.getString("zone_name");
+                        zone_index = result.getInt("zone_index");
+                        floor = result.getInt("floor");
                     }
                     break;
                 case 2:
-                    array = json.getJSONArray("entering_logs");
+                    array = json.getJSONArray(""); // 서버 측에 API 제작 요청
                     for (int i = 0; i < array.length(); i++){
                         JSONObject result = array.getJSONObject(i);
-                        id.add(result.getInt("id"));
-                        start_at.add(result.getInt("start_at"));
-                        end_at.add(result.getInt("end_at"));
-                    }
-                    break;
-                case 3:
-                    array = json.getJSONArray("places");
-                    for (int i = 0; i < array.length(); i++){
-                        JSONObject result = array.getJSONObject(i);
-                        id.add(result.getInt("id"));
-                        zone_name.add(result.getString("zone_name"));
-                        zone_index.add(result.getInt("zone_index"));
-                        floor.add(result.getInt("floor"));
-                        numbering.add(result.getString("car_numbering"));
+                        empty_space = result.getInt(""); // 서버 측에 API 제작 요청
                     }
                     break;
             }
@@ -75,26 +52,20 @@ public class JSONParser {
         }
     }
 
-    public ArrayList<String> getNumbering(){
+    public String getNumbering(){
         return numbering;
     }
-    public ArrayList<Integer> getStart_at(){
+    public int getStart_at(){
         return start_at;
     }
-    public ArrayList<String> getZone_name(){
+    public String getZone_name(){
         return zone_name;
     }
-    public ArrayList<Integer> getZone_index(){
+    public int getZone_index(){
         return zone_index;
     }
-    public ArrayList<Integer> getFloor(){
+    public int getFloor(){
         return floor;
-    }
-    public ArrayList<Integer> getId(){
-        return id;
-    }
-    public ArrayList<Integer> getEnd_at(){
-        return end_at;
     }
     public int getEmpty_space() { return empty_space; }
 

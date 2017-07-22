@@ -7,8 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 
 public class CalculateFare extends AppCompatActivity {
@@ -16,11 +16,11 @@ public class CalculateFare extends AppCompatActivity {
     TextView Fare;
     String StartHour, StartMinute, EndHour, EndMinute;
     int BetweenHour, BetweenMinute;
-    private final String url = "http://14.44.125.19/db.php"; // DB 서버 url
     private String result; // DB 데이터
-    private ArrayList<String> str_arr;  // 차량 번호
-    private ArrayList<String> StartTime_arr;  // 입차시간
     HttpURLConnector conn;
+    JSONParser jsonParser;
+    final static int NotFound = 0;
+    int start_at = NotFound ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +71,7 @@ public class CalculateFare extends AppCompatActivity {
         }
     }
 
-    public void SearchTime(View v){
+    public void SearchTime(View v){  // 수동으로 차량 번호를 입력해서 입차 시간 검색
         EdtCarNumber = (EditText)findViewById(R.id.EdtCarNumber);
         String CarNumber = EdtCarNumber.getText().toString();
         ShowStartTime(CarNumber);
@@ -84,31 +84,25 @@ public class CalculateFare extends AppCompatActivity {
 
         String url="https://";
         conn = new HttpURLConnector(url + CarNumber);
-        conn.connect();
+        conn.start();
+        result = conn.getResult();
 
-        /*
-        JSONParser jsonParser = new JSONParser(result);
-        jsonParser.parser();
+        jsonParser = new JSONParser(result);
+        // jsonParser.parser();
 
-        str_arr = jsonParser.getStr_arr();
-        StartTime_arr = jsonParser.getStartTime_arr();
+        start_at = jsonParser.getStart_at(); // substring 으로 시간 단위 분할
 
         boolean find = false;
-        for(int i = 0; i < str_arr.size(); i++){
-            if(CarNumber.equals(str_arr.get(i))){
-                StartHour = (StartTime_arr.get(i)).substring(0,1);   // 시간만 분리
-                StartMinute = (StartTime_arr.get(i)).substring(3,4); // 2는 콜론 표시
-                EdtStartHour.setText(StartHour);
-                EdtStartMinute.setText(StartMinute);
-                find = true;
-                break;
-            }
+        if(start_at != NotFound){
+            find = true;
+            EdtStartHour.setText("");
+            EdtStartMinute.setText("");
         }
+
         if(!find){
             Toast.makeText(getApplicationContext(),
                     "해당 차량은 없습니다.", Toast.LENGTH_LONG).show();
         }
-        */
     }
 
     public void BackToStartMenu(View v){

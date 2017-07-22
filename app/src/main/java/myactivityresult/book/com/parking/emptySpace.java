@@ -7,8 +7,8 @@ import android.widget.TextView;
 public class emptySpace extends Thread {
     private TextView empty;
     private HttpURLConnector conn;
-    private String StrEmptySpace;
     private int emptySpace;
+    private String result;
 
     public emptySpace(TextView empty){
         this.empty = empty;
@@ -16,17 +16,18 @@ public class emptySpace extends Thread {
 
     public void run(){
         while(true) {
-            String url = "https://"; // 여유 칸 보내주는 API 주소 나중에 추가
+            String url = "http://"; // 여유 칸 보내주는 API 주소 나중에 추가
             conn = new HttpURLConnector(url);
-            StrEmptySpace = conn.connect();
-            JSONParser parser = new JSONParser(StrEmptySpace);
+            conn.start();
+            result = conn.getResult();
+            JSONParser parser = new JSONParser(result);
             emptySpace = parser.getEmpty_space();
 
             Handler handler = new Handler();
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    empty.setText(emptySpace + "");
+                    empty.setText("여유칸 : " + String.valueOf(emptySpace));
                 }
             });
             try{

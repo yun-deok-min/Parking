@@ -17,7 +17,6 @@ public class aeroview extends AppCompatActivity {
     Spinner floor;
     private boolean initSpinner = false;
     ArrayList<String> FloorData;
-    HttpURLConnector conn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,24 +40,21 @@ public class aeroview extends AppCompatActivity {
         floor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id){
-                String url="https://";  // 기본 API 주소
+                String url="http://";  // 기본 API 주소
 
                 if(initSpinner == false){
                     initSpinner = true;
                     floor.setSelection(0);       // 1층을 디폴트 값으로
-                    conn = new HttpURLConnector(url); // 1층 구분 표시 추가
-                    conn.connect();
+                    AeroView.loadUrl(url + "/1");
                     return;
                 }
 
                 switch (position){
                     case 0 :  // 1층 조감도
-                        conn = new HttpURLConnector(url); // 1층 구분 표시 추가
-                        conn.connect();
+                        AeroView.loadUrl(url + "/1");
                         break;
                     case 1 :  // 2층 조감도
-                        conn = new HttpURLConnector(url); // 2층 구분 표시 추가
-                        conn.connect();
+                        AeroView.loadUrl(url + "/2");
                         break;
                     default :
                         break;

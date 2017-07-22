@@ -6,31 +6,33 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class HttpURLConnector {
+public class HttpURLConnector extends Thread {
     private String url_str;
     private HttpURLConnection conn;
+    private String result;
 
     public HttpURLConnector(String url_str) {
         this.url_str = url_str;
     }
 
-    public String connect() {
+    public void run(){
         try {
             URL url = new URL(url_str);
             conn = (HttpURLConnection) url.openConnection();
 
             if (conn != null) {
                 conn.setDoInput(true);
+               // conn.setDoOutput(true);
                 conn.setConnectTimeout(10000);
                 conn.setRequestMethod("GET");
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         StringBuilder sb = new StringBuilder();
         try {
             int res_code = conn.getResponseCode();
+            // Log.d("test", "code : " + res_code);
             if (res_code == HttpURLConnection.HTTP_OK) {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 String line = null;
@@ -45,6 +47,10 @@ public class HttpURLConnector {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return sb.toString();
+        result = sb.toString();
+    }
+
+    public String getResult(){
+        return  result;
     }
 }
