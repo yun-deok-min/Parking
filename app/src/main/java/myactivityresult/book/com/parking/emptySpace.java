@@ -19,6 +19,9 @@ public class emptySpace extends Thread {
             String url = "http://"; // 여유 칸 보내주는 API 주소 나중에 추가
             conn = new HttpURLConnector(url);
             conn.start();
+            try{
+                Thread.sleep(70);
+            }catch (InterruptedException e){ }
             result = conn.getResult();
             JSONParser parser = new JSONParser(result);
             emptySpace = parser.getEmpty_space();

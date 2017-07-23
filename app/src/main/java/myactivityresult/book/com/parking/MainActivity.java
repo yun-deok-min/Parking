@@ -97,8 +97,8 @@ public class MainActivity extends AppCompatActivity {
 
         TotalSpace = (TextView)findViewById(R.id.TotalSpace); // 고정값?
         AvailableSpace = (TextView)findViewById(R.id.AvailableSpace);
-        empty_space = new emptySpace(AvailableSpace);
-        empty_space.start();
+        //empty_space = new emptySpace(AvailableSpace);
+        //empty_space.start();
     }
 
     class ImageAdapter extends BaseAdapter{

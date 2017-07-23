@@ -32,7 +32,7 @@ public class HttpURLConnector extends Thread {
         StringBuilder sb = new StringBuilder();
         try {
             int res_code = conn.getResponseCode();
-            // Log.d("test", "code : " + res_code);
+            // Log.d("test", "연결 상태 code : " + res_code);
             if (res_code == HttpURLConnection.HTTP_OK) {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 String line = null;

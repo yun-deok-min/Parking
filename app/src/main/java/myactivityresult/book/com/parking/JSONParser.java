@@ -1,13 +1,12 @@
 package myactivityresult.book.com.parking;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class JSONParser {
     private String dbStr;
     private String numbering;
-    private int start_at;
+    private int started_at;
     private String zone_name;
     private int zone_index;
     private int floor;
@@ -21,32 +20,33 @@ public class JSONParser {
     public void parser(int select){
         try {
             JSONObject json = new JSONObject(dbStr);
+            JSONObject json2;
 
             switch (select) {
                 case 1:
+                    json2 = json.getJSONObject("car");
+                    numbering = json2.getString("numbering");
+                    started_at = json2.getInt("started_at");
+
+                    /*
                     JSONArray array = json.getJSONArray("car");
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject result = array.getJSONObject(i);
                         numbering = result.getString("numbering");
-                        start_at = result.getInt("start_at");
+                        started_at = result.getInt("started_at");
                     }
-                    array = json.getJSONArray("place");
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject result = array.getJSONObject(i);
-                        zone_name = result.getString("zone_name");
-                        zone_index = result.getInt("zone_index");
-                        floor = result.getInt("floor");
-                    }
+                    */
+                    json2 = json.getJSONObject("place");
+                    zone_name = json2.getString("zone_name");
+                    zone_index = json2.getInt("zone_index");
+                    floor = json2.getInt("floor");
+
                     break;
                 case 2:
-                    array = json.getJSONArray(""); // 서버 측에 API 제작 요청
-                    for (int i = 0; i < array.length(); i++){
-                        JSONObject result = array.getJSONObject(i);
-                        empty_space = result.getInt(""); // 서버 측에 API 제작 요청
-                    }
+                    json2 = json.getJSONObject(""); // 서버 측에 API 제작 요청
+                    empty_space = json2.getInt("");
                     break;
             }
-
         } catch(JSONException e) {
             e.printStackTrace();
         }
@@ -55,8 +55,8 @@ public class JSONParser {
     public String getNumbering(){
         return numbering;
     }
-    public int getStart_at(){
-        return start_at;
+    public int getStarted_at(){
+        return started_at;
     }
     public String getZone_name(){
         return zone_name;
@@ -68,5 +68,4 @@ public class JSONParser {
         return floor;
     }
     public int getEmpty_space() { return empty_space; }
-
 }

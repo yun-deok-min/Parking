@@ -48,24 +48,30 @@ public class MyCarPosition extends AppCompatActivity {
         ViewMyCar = (WebView)findViewById(R.id.ViewMyCar);
         ViewMyCar.setWebViewClient(new WebViewClient());
 
-        String url = "https://";
+        String url = "http://13.124.74.249:3000/cars/";
         conn = new HttpURLConnector(url +  CarNumber);
         conn.start();
+        try{
+            Thread.sleep(70);
+        }catch (InterruptedException e){ }
         result = conn.getResult();
+        // Log.d("test", "결과(result) : " + result);
 
         jsonParser = new JSONParser(result);
-        // jsonParser.parser();
+        jsonParser.parser(1);
         zone_index = jsonParser.getZone_index();
         zone_name = jsonParser.getZone_name();
         floor = jsonParser.getFloor();
 
+        String space = String.valueOf(floor) + zone_name + String.valueOf(zone_index);
+
         boolean find = false;
         if(floor != NotFound){
             find = true;
-            CarPosition.setText(String.valueOf(floor) + zone_name + String.valueOf(zone_index));
+            CarPosition.setText("위치 : " + space);
 
-            String view_url = "https://"
-                    + String.valueOf(floor); // 받은 데이터 중에서 층 정보만 분리
+            String view_url = "http://13.124.74.249:3000/cars/" + space;
+            // cars 는 space 나 aeroview 로 변경 차량 위치를 조감도로 보여줌
             switch (floor){
                 case 1 :
                     ViewMyCar.loadUrl(view_url);
