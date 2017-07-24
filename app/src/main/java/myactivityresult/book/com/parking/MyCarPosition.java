@@ -52,8 +52,8 @@ public class MyCarPosition extends AppCompatActivity {
         conn = new HttpURLConnector(url +  CarNumber);
         conn.start();
         try{
-            Thread.sleep(70);
-        }catch (InterruptedException e){ }
+            conn.join();
+        } catch(InterruptedException e){};
         result = conn.getResult();
         // Log.d("test", "결과(result) : " + result);
 

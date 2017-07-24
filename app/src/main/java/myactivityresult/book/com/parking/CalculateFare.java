@@ -86,12 +86,12 @@ public class CalculateFare extends AppCompatActivity {
         conn = new HttpURLConnector(url + CarNumber);
         conn.start();
         try{
-            Thread.sleep(70);
-        }catch (InterruptedException e){ }
+            conn.join();
+        } catch(InterruptedException e){};
         result = conn.getResult();
 
         jsonParser = new JSONParser(result);
-        // jsonParser.parser();
+        jsonParser.parser(1);
 
         start_at = jsonParser.getStarted_at(); // substring 으로 시간 단위 분할
 

@@ -20,10 +20,11 @@ public class emptySpace extends Thread {
             conn = new HttpURLConnector(url);
             conn.start();
             try{
-                Thread.sleep(70);
-            }catch (InterruptedException e){ }
+                conn.join();
+            } catch(InterruptedException e){};
             result = conn.getResult();
             JSONParser parser = new JSONParser(result);
+            parser.parser(2);
             emptySpace = parser.getEmpty_space();
 
             Handler handler = new Handler();
