@@ -85,9 +85,12 @@ public class CalculateFare extends AppCompatActivity {
         String url="https://";
         conn = new HttpURLConnector(url + CarNumber);
         conn.start();
+        LoadingDialog dialog = new LoadingDialog(CalculateFare.this);
+        dialog.execute();
         try{
             conn.join();
         } catch(InterruptedException e){};
+        dialog.setIsEnd();
         result = conn.getResult();
 
         jsonParser = new JSONParser(result);

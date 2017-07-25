@@ -22,7 +22,6 @@ public class HttpURLConnector extends Thread {
 
             if (conn != null) {
                 conn.setDoInput(true);
-               // conn.setDoOutput(true);
                 conn.setConnectTimeout(10000);
                 conn.setRequestMethod("GET");
             }
@@ -44,10 +43,22 @@ public class HttpURLConnector extends Thread {
                 }
                 reader.close();
             }
+            else if(res_code == 422){
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+                String line = null;
+                while (true) {
+                    line = reader.readLine();
+                    if (line == null)
+                        break;
+                    sb.append(line + "\n");
+                }
+                reader.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
         result = sb.toString();
+        conn.disconnect();
     }
 
     public String getResult(){

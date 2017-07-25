@@ -2,12 +2,10 @@ package myactivityresult.book.com.parking;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import java.util.ArrayList;
 
 public class temp extends Activity{
     public void TellToParkingCenter(){
@@ -21,20 +19,23 @@ public class temp extends Activity{
 
     public void CalculateMoney(){
         int monthly_fare = 0;
-        ArrayList<Integer> daliy_fare;
+        int temp_fare;
+        Cursor daily_fare;
         EditText CarNumber = (EditText)findViewById(R.id.);
-        String url = "http://~~~/money/";
-        HttpURLConnector conn = new HttpURLConnector(url + CarNumber.getText().toString());
-        conn.start();
-        try{
-            Thread.sleep(70);
-        }catch (InterruptedException e){ }
-        String result = conn.getResult();
-        JSONParser jsonParser = new JSONParser(result);
-        jsonParser.parser();
-        daliy_fare = jsonParser.getDaliyFare();
-        for(int i=0; i<daliy_fare.size(); i++){
-            monthly_fare = monthly_fare + daliy_fare.get(i);
+        EditText Year = (EditText)findViewById(R.id.);
+        EditText Month = (EditText)findViewById(R.id.);
+
+        SQLiteHelper sqh = new SQLiteHelper(temp.this);
+
+        String month = Month.getText().toString();
+        String year = Year.getText().toString();
+        daily_fare = sqh.getMonthlyFare(CarNumber.getText().toString(), Integer.parseInt(month));
+        daily_fare = sqh.getMonthlyFare(CarNumber.getText().toString(),
+                Integer.parseInt(month), Integer.parseInt(year));
+
+        while(daily_fare.moveToNext()){
+            temp_fare = daily_fare.getInt(daily_fare.getColumnIndex(MoneyLogTable.Fare));
+            monthly_fare = monthly_fare + temp_fare;
         }
     }
 }
