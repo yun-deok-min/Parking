@@ -1,14 +1,9 @@
 package myactivityresult.book.com.parking;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
-import android.widget.EditText;
-import android.widget.TextView;
 
 public class temp extends Activity{
-    public void TellToParkingCenter(){
+    /*public void TellToParkingCenter(){
         Intent intent = new Intent();
         TextView textView = (TextView)findViewById(R.id.) ;
         intent.setAction(Intent.ACTION_DIAL);
@@ -37,5 +32,5 @@ public class temp extends Activity{
             temp_fare = daily_fare.getInt(daily_fare.getColumnIndex(MoneyLogTable.Fare));
             monthly_fare = monthly_fare + temp_fare;
         }
-    }
+    }*/
 }

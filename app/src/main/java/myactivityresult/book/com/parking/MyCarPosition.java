@@ -51,12 +51,9 @@ public class MyCarPosition extends AppCompatActivity {
         String url = "http://13.124.74.249:3000/cars/";
         conn = new HttpURLConnector(url +  CarNumber);
         conn.start();
-        LoadingDialog dialog = new LoadingDialog(MyCarPosition.this);
-        dialog.execute();
         try{
             conn.join();
         } catch(InterruptedException e){};
-        dialog.setIsEnd();
         result = conn.getResult();
         // Log.d("test", "결과(result) : " + result);
 

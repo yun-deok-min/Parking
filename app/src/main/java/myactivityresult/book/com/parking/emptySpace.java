@@ -22,12 +22,9 @@ public class emptySpace extends Thread {
             String url = "http://"; // 여유 칸 보내주는 API 주소 나중에 추가
             conn = new HttpURLConnector(url);
             conn.start();
-            LoadingDialog dialog = new LoadingDialog(context);
-            dialog.execute();
             try{
                 conn.join();
             } catch(InterruptedException e){};
-            dialog.setIsEnd();
             result = conn.getResult();
             JSONParser parser = new JSONParser(result);
             parser.parser(2);
