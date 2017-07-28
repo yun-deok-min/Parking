@@ -33,4 +33,30 @@ public class temp extends Activity{
             monthly_fare = monthly_fare + temp_fare;
         }
     }*/
+
+    public void EnteringLog(String CarNumber){
+        // MainActivity 의 onCreate 에서 마지막 접속 시간 이후의 로그를 서버와 통신해서 가져옴
+        // if(start_at > lastVisitTime) 이면 JSON 파싱
+        /* MainActivity 의 onDestroy 에서 마지막 접속 시간 저장
+        Date today = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy년 MM월 dd일 hh시 mm분 ss초");
+        String lastVisitTime = sdf.format(today);
+
+        pref = getSharedPreferences("my_db", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("lastVisitTime", lastVisitTime);  // 종료 시 시간 저장
+        editor.commit();
+        */
+        String url = "http://13.124.74.249:3000/entering_logs?car_numbering=:";
+        HttpURLConnector conn = new HttpURLConnector(url + CarNumber);
+        conn.start();
+        try{
+            conn.join();
+        } catch(InterruptedException e){};
+        String result = conn.getResult();
+        JSONParser parser = new JSONParser(result);
+        parser.parser(2);
+        int start_at = parser.getStarted_at();
+        int end_at = parser.getEnd_at();
+    }
 }

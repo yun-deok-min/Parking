@@ -1,13 +1,20 @@
 package myactivityresult.book.com.parking;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,8 +104,36 @@ public class MainActivity extends AppCompatActivity {
 
         TotalSpace = (TextView)findViewById(R.id.TotalSpace); // 고정값?
         AvailableSpace = (TextView)findViewById(R.id.AvailableSpace);
-        //empty_space = new emptySpace(AvailableSpace, MainActivity.this);
-        //empty_space.start();
+        empty_space = new emptySpace(AvailableSpace, MainActivity.this);
+        empty_space.start();
+        if(empty_space.getEmptySpace() == 0){
+            MakeNotification();
+        }
+    }
+
+    public void MakeNotification(){
+        Resources res = getResources();
+        Intent intent = new Intent(getApplicationContext(), NotificationSomething.class);
+        int NotificationID = 1234;
+        intent.putExtra("NotificationID", NotificationID);
+        PendingIntent contentIntent = PendingIntent.getActivity
+                (this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+
+        builder.setContentTitle("Parking Manager").setContentText("주차장 현황")
+                .setTicker("주차장이 만차입니다").setSmallIcon(R.mipmap.ic_launcher)
+                .setLargeIcon(BitmapFactory.decodeResource(res, R.mipmap.ic_launcher))
+                .setContentIntent(contentIntent).setAutoCancel(true)
+                .setWhen(System.currentTimeMillis()).setDefaults(Notification.DEFAULT_ALL);
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            builder.setCategory(Notification.CATEGORY_MESSAGE)
+                    .setPriority(Notification.PRIORITY_HIGH)
+                    .setVisibility(Notification.VISIBILITY_PUBLIC);
+        }
+
+        NotificationManager nm = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        nm.notify(NotificationID, builder.build());
     }
 
     class ImageAdapter extends BaseAdapter{

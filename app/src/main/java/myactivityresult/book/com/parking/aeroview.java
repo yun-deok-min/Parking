@@ -43,25 +43,26 @@ public class aeroview extends AppCompatActivity {
         floor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id){
-                progressBar.setVisibility(View.VISIBLE);
                 String url="http://";  // 기본 API 주소
+                ProgressBarTask task;
 
                 if(initSpinner == false){
                     initSpinner = true;
                     floor.setSelection(0);       // 1층을 디폴트 값으로
                     AeroView.loadUrl(url + "/1");
-                    progressBar.setVisibility(View.INVISIBLE);
+                    task = new ProgressBarTask(url + "/1", AeroView, progressBar);
+                    task.execute();
                     return;
                 }
 
                 switch (position){
                     case 0 :  // 1층 조감도
-                        AeroView.loadUrl(url + "/1");
-                        progressBar.setVisibility(View.INVISIBLE);
+                        task = new ProgressBarTask(url + "/1", AeroView, progressBar);
+                        task.execute();
                         break;
                     case 1 :  // 2층 조감도
-                        AeroView.loadUrl(url + "/2");
-                        progressBar.setVisibility(View.INVISIBLE);
+                        task = new ProgressBarTask(url + "/2", AeroView, progressBar);
+                        task.execute();
                         break;
                     default :
                         break;

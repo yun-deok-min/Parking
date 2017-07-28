@@ -101,7 +101,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
         String query = "SELECT " + MoneyLogTable.Fare +
                 " FROM " + MoneyLogTable.TABLE_NAME +
-                " WHERE " + MoneyLogTable.Fare + "= ?" +
+                " WHERE " + MoneyLogTable.Date + "= ?" +
                 " AND " + MoneyLogTable.CarNumber + "= ?" + ";";
         Calendar now = Calendar.getInstance();
         int year = now.get(Calendar.DAY_OF_YEAR);

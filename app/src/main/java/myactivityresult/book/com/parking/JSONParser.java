@@ -7,6 +7,7 @@ public class JSONParser {
     private String dbStr;
     private String numbering;
     private int started_at;
+    private int end_at;
     private String zone_name;
     private int zone_index;
     private int floor;
@@ -57,6 +58,9 @@ public class JSONParser {
     }
     public int getStarted_at(){
         return started_at;
+    }
+    public int getEnd_at(){
+        return end_at;
     }
     public String getZone_name(){
         return zone_name;

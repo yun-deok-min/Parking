@@ -44,4 +44,5 @@ public class emptySpace extends Thread {
             }
         }
     }
+    public int getEmptySpace(){ return emptySpace; }
 }
