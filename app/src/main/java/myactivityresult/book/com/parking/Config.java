@@ -9,18 +9,22 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class Enrollment extends AppCompatActivity {
+public class Config extends AppCompatActivity {
     EditText EdtCarNumber;
     SharedPreferences pref;
-    HttpURLConnector conn;
+    String carNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_enrollment);
+        setContentView(R.layout.activity_config);
 
-        Intent intent = getIntent();
-        conn = (HttpURLConnector)intent.getSerializableExtra("conn");
+        pref = getSharedPreferences("save01", Context.MODE_PRIVATE);
+        carNumber = pref.getString("CarNumber","");
+        if(!carNumber.equals("")) {
+           EdtCarNumber = (EditText) findViewById(R.id.EdtCarNumber);
+           EdtCarNumber.setText(carNumber);
+        }
     }
 
     public void EnrollCar(View v){
@@ -32,6 +36,18 @@ public class Enrollment extends AppCompatActivity {
         editor.commit();
         Toast.makeText(getApplicationContext(),
                 "차량 번호가 등록되었습니다.", Toast.LENGTH_LONG).show();
+    }
+
+    public void ShowTimeLog(View v){
+        carNumber = pref.getString("CarNumber","");
+        if(carNumber.equals("")) {
+            Toast.makeText(getApplicationContext(), "등록된 차량이 없습니다",
+                    Toast.LENGTH_LONG).show();
+        }
+        else {
+            Intent intent = new Intent(getApplicationContext(), TimeLogActivity.class);
+            startActivity(intent);
+        }
     }
 
     public void BackToStartMenu(View v){

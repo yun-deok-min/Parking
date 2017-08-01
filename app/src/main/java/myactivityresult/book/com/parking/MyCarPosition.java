@@ -20,6 +20,8 @@ public class MyCarPosition extends AppCompatActivity {
     JSONParser jsonParser;
     private String CarNumber;
     final static int NotFound = 0;
+    final static int GET = 1000;
+    final static int POST = 1001;
     private String zone_name;
     private int zone_index;
     private int floor = NotFound;
@@ -49,7 +51,7 @@ public class MyCarPosition extends AppCompatActivity {
         ViewMyCar.setWebViewClient(new WebViewClient());
 
         String url = "http://13.124.74.249:3000/cars/";
-        conn = new HttpURLConnector(url +  CarNumber);
+        conn = new HttpURLConnector(url +  CarNumber, GET);
         conn.start();
         try{
             conn.join();

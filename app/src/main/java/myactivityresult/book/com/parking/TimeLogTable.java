@@ -7,5 +7,4 @@ public class TimeLogTable {
     public static final String CarNumber = "car_number";
     public static final String Start = "start_at";
     public static final String End = "end_at";
-
 }

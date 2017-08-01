@@ -1,7 +1,12 @@
 package myactivityresult.book.com.parking;
 
+import android.content.SharedPreferences;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class JSONParser {
     private String dbStr;
@@ -12,6 +17,9 @@ public class JSONParser {
     private int zone_index;
     private int floor;
     private int empty_space;
+
+    private ArrayList<Integer> entered_array;
+    private ArrayList<Integer> exited_array;
 
     public JSONParser(String dbStr){
         this.dbStr = dbStr;
@@ -29,14 +37,6 @@ public class JSONParser {
                     numbering = json2.getString("numbering");
                     started_at = json2.getInt("started_at");
 
-                    /*
-                    JSONArray array = json.getJSONArray("car");
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject result = array.getJSONObject(i);
-                        numbering = result.getString("numbering");
-                        started_at = result.getInt("started_at");
-                    }
-                    */
                     json2 = json.getJSONObject("place");
                     zone_name = json2.getString("zone_name");
                     zone_index = json2.getInt("zone_index");
@@ -44,13 +44,29 @@ public class JSONParser {
 
                     break;
                 case 2:
-                    json2 = json.getJSONObject(""); // 서버 측에 API 제작 요청
-                    empty_space = json2.getInt("");
+                    empty_space = json.getInt("empty_places_count");
                     break;
             }
         } catch(JSONException e) {
             e.printStackTrace();
         }
+    }
+    public void parser_array(SharedPreferences pref){
+        int last_index = pref.getInt("last_index", 0);
+        try{
+            JSONObject json = new JSONObject(dbStr);
+            JSONArray jsonArray = json.getJSONArray("entering_logs");
+            for(int i = last_index ; i < jsonArray.length(); i++){
+                JSONObject result = jsonArray.getJSONObject(i);
+                entered_array.add(result.getInt("entered_at"));
+                exited_array.add(result.getInt("exited_at"));
+                last_index++;
+            }
+        } catch(JSONException e){}
+
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putInt("last_index",last_index);
+        editor.commit();
     }
 
     public String getNumbering(){
@@ -72,4 +88,6 @@ public class JSONParser {
         return floor;
     }
     public int getEmpty_space() { return empty_space; }
+    public ArrayList<Integer> getEntered_array(){ return entered_array; }
+    public ArrayList<Integer> getExited_array(){ return exited_array; }
 }

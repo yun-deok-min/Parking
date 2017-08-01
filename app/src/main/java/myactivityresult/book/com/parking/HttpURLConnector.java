@@ -10,9 +10,13 @@ public class HttpURLConnector extends Thread {
     private String url_str;
     private HttpURLConnection conn;
     private String result;
+    private int mode;
+    final static int GET = 1000;
+    final static int POST = 1001;
 
-    public HttpURLConnector(String url_str) {
+    public HttpURLConnector(String url_str, int mode) {
         this.url_str = url_str;
+        this.mode = mode;
     }
 
     public void run(){
@@ -21,7 +25,13 @@ public class HttpURLConnector extends Thread {
             conn = (HttpURLConnection) url.openConnection();
 
             if (conn != null) {
-                conn.setDoInput(true);
+                if(mode == GET){
+                    conn.setDoInput(true);
+                }
+                else if(mode == POST){
+                    conn.setDoInput(true);
+                    conn.setDoOutput(true);
+                }
                 conn.setConnectTimeout(10000);
                 conn.setRequestMethod("GET");
             }

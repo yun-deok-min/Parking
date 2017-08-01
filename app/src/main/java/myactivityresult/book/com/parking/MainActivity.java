@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(intent);
                         break;
                     case 3 :  // 차량 번호 등록 아이콘
-                        intent = new Intent(getApplicationContext(), Enrollment.class);
+                        intent = new Intent(getApplicationContext(), Config.class);
                         startActivity(intent);
                         break;
                     default :
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
             builder.setPositiveButton("예", new DialogInterface.OnClickListener(){
                 @Override
                 public void onClick(DialogInterface dialog, int which){
-                    Intent intent = new Intent(getApplicationContext(), Enrollment.class);
+                    Intent intent = new Intent(getApplicationContext(), Config.class);
                     startActivity(intent);
                 }
             });
@@ -106,9 +106,12 @@ public class MainActivity extends AppCompatActivity {
         AvailableSpace = (TextView)findViewById(R.id.AvailableSpace);
         empty_space = new emptySpace(AvailableSpace, MainActivity.this);
         empty_space.start();
-        if(empty_space.getEmptySpace() == 0){
-            MakeNotification();
-        }
+        //try{
+        //    empty_space.join();
+        //} catch(InterruptedException e){};
+        //if(empty_space.getEmptySpace() == 0){
+          //  MakeNotification();
+        //}
     }
 
     public void MakeNotification(){

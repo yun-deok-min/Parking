@@ -9,7 +9,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.StringTokenizer;
 
 public class CalculateFare extends AppCompatActivity {
     EditText EdtCarNumber, EdtStartHour, EdtStartMinute, EdtEndHour, EdtEndMinute;
@@ -20,6 +22,8 @@ public class CalculateFare extends AppCompatActivity {
     HttpURLConnector conn;
     JSONParser jsonParser;
     final static int NotFound = 0;
+    final static int GET = 1000;
+    final static int POST = 1001;
     int start_at = NotFound ;
 
     @Override
@@ -82,8 +86,8 @@ public class CalculateFare extends AppCompatActivity {
         EdtStartHour = (EditText)findViewById(R.id.EdtStartHour);
         EdtStartMinute = (EditText)findViewById(R.id.EdtStartMinute);
 
-        String url="https://";
-        conn = new HttpURLConnector(url + CarNumber);
+        String url="http://13.124.74.249:3000/cars/";
+        conn = new HttpURLConnector(url + CarNumber, GET);
         conn.start();
         try{
             conn.join();
@@ -93,19 +97,28 @@ public class CalculateFare extends AppCompatActivity {
         jsonParser = new JSONParser(result);
         jsonParser.parser(1);
 
-        start_at = jsonParser.getStarted_at(); // substring 으로 시간 단위 분할
+        start_at = jsonParser.getStarted_at();
 
         boolean find = false;
         if(start_at != NotFound){
             find = true;
-            EdtStartHour.setText("");
-            EdtStartMinute.setText("");
+            getTime(start_at);
         }
 
         if(!find){
             Toast.makeText(getApplicationContext(),
                     "해당 차량은 없습니다.", Toast.LENGTH_LONG).show();
         }
+    }
+
+    public void getTime(int millisec){
+        String pattern = "HH:mm";
+        long millisec_1 = (long)millisec * 1000L;
+        SimpleDateFormat format = new SimpleDateFormat(pattern);
+        String date = format.format(millisec_1);
+        StringTokenizer tokenizer = new StringTokenizer(date, ":");
+        EdtStartHour.setText(tokenizer.nextToken());
+        EdtStartMinute.setText(tokenizer.nextToken());
     }
 
     public void BackToStartMenu(View v){

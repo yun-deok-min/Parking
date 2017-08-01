@@ -11,16 +11,20 @@ public class emptySpace extends Thread {
     private int emptySpace;
     private String result;
     Context context;
+    final static int GET = 1000;
+    final static int POST = 1001;
+    Handler handler;
 
     public emptySpace(TextView empty, Context context){
         this.empty = empty;
         this.context = context;
+        handler = new Handler();
     }
 
     public void run(){
         while(true) {
-            String url = "http://"; // 여유 칸 보내주는 API 주소 나중에 추가
-            conn = new HttpURLConnector(url);
+            String url = "http://13.124.74.249:3000/empty_places_count"; // 여유 칸 보내주는 API 주소 나중에 추가
+            conn = new HttpURLConnector(url, GET);
             conn.start();
             try{
                 conn.join();
@@ -30,7 +34,6 @@ public class emptySpace extends Thread {
             parser.parser(2);
             emptySpace = parser.getEmpty_space();
 
-            Handler handler = new Handler();
             handler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -44,5 +47,6 @@ public class emptySpace extends Thread {
             }
         }
     }
-    public int getEmptySpace(){ return emptySpace; }
+
+    public int getEmptySpace(){return emptySpace; }
 }

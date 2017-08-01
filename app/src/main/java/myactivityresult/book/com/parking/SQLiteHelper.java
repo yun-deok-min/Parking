@@ -7,7 +7,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+
+import static myactivityresult.book.com.parking.MoneyLogTable.Date;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "my_database.db";
@@ -29,6 +33,12 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 MoneyLogTable.Date + " TEXT, " +   // yy:MM:dd
                 MoneyLogTable.CarNumber + " TEXT, " +
                 MoneyLogTable.Fare + " INTEGER" + ");" );
+
+        db.execSQL("CREATE TABLE " + TimeLogTable.TABLE_NAME + " (" +
+                TimeLogTable.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                TimeLogTable.CarNumber + " TEXT, " +
+                TimeLogTable.Start + " TEXT, " +      // yy:MM:dd
+                TimeLogTable.End + " TEXT" + ");" );  // yy:MM:dd
 
         db.execSQL("ALTER TABLE " + CarTable.TABLE_NAME + " ADD CONSTRAINT "
                 + CarTable.TABLE_NAME + "_CK CHECK (" + CarTable.State
@@ -66,12 +76,33 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public void addMoneyLog(String Date, String CarNumber, int fare){
         ContentValues contentvalues = new ContentValues();
 
-        contentvalues.put(MoneyLogTable.Date, Date);
+        contentvalues.put(Date, Date);
         contentvalues.put(MoneyLogTable.CarNumber, CarNumber);
         contentvalues.put(MoneyLogTable.Fare, fare);
 
         SQLiteDatabase sqlDB = getWritableDatabase();
         sqlDB.insert(MoneyLogTable.TABLE_NAME, MoneyLogTable.CarNumber, contentvalues);
+    }
+
+    public void addTimeLog(int start_at, int end_at){
+        ContentValues contentvalues = new ContentValues();
+
+        contentvalues.put(TimeLogTable.Start, start_at);   // yy:MM:dd
+        contentvalues.put(TimeLogTable.End, end_at);       // yy:MM:dd
+
+        SQLiteDatabase sqlDB = getWritableDatabase();
+        sqlDB.insert(TimeLogTable.TABLE_NAME, TimeLogTable.Start, contentvalues);
+    }
+
+    public void addTimeLog(ArrayList<Integer> start_at, ArrayList<Integer> end_at){
+        ContentValues contentvalues = new ContentValues();
+
+        SQLiteDatabase sqlDB = getWritableDatabase();
+        for(int i=0; i<start_at.size(); i++) {
+            contentvalues.put(TimeLogTable.Start, start_at.get(i));  // yy:MM:dd
+            contentvalues.put(TimeLogTable.End, end_at.get(i));      // yy:MM:dd
+            sqlDB.insert(TimeLogTable.TABLE_NAME, TimeLogTable.Start, contentvalues);
+        }
     }
 
     public Cursor getAllDatabase(String TableName){
@@ -101,8 +132,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
         String query = "SELECT " + MoneyLogTable.Fare +
                 " FROM " + MoneyLogTable.TABLE_NAME +
-                " WHERE " + MoneyLogTable.Date + "= ?" +
+                " WHERE " + Date + "= ?" +
                 " AND " + MoneyLogTable.CarNumber + "= ?" + ";";
+
         Calendar now = Calendar.getInstance();
         int year = now.get(Calendar.DAY_OF_YEAR);
         String date = String.valueOf(year) + ":" + String.valueOf(month) + ":*";
@@ -119,5 +151,36 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         // 학생이 등록된 모든 클래스 매핑을 제거
         int result = sqlDB.delete(CarTable.TABLE_NAME, CarTable.CarNumber + "= ?", whereArgs);
         return (result > 0);
+    }
+
+    public void setLog(ArrayList<Integer> entered_array,ArrayList<Integer> ended_array, String car_number){
+        SQLiteDatabase db = getWritableDatabase();
+        for(int i = 0 ; i < entered_array.size(); i++){
+            String pattern = "yyyy-MM-dd HH:mm";
+            SimpleDateFormat formatter = new SimpleDateFormat(pattern);
+            String entered_date = formatter.format(entered_array.get(i));
+            String ended_date = formatter.format(ended_array.get(i));
+
+            db.execSQL("insert into " + TimeLogTable.TABLE_NAME +" values(null, " + car_number
+                    + ", " + entered_date + ", " + ended_date + ");");
+
+            // (null, '88허1234', '2017-06-11 11:33', '2017-06-11 12:33');
+        }
+    }
+
+    public Cursor getLog(String car_number){
+        SQLiteDatabase db = getReadableDatabase();
+        String[] selectionArgs = new String[] { car_number };
+        return db.rawQuery("select * from " + TimeLogTable.TABLE_NAME +
+                " where " + TimeLogTable.CarNumber + " = ?;", selectionArgs);
+    }
+
+    public int getVisitCount(String CarNumber){
+        Cursor cursor = getLog(CarNumber);
+        int visit_count=0;
+        while (cursor.moveToNext()){
+            visit_count++;
+        }
+        return visit_count;
     }
 }

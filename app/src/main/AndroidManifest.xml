@@ -21,8 +21,9 @@
         <activity android:name=".aeroview" />
         <activity android:name=".CalculateFare" />
         <activity android:name=".MyCarPosition" />
-        <activity android:name=".Enrollment" />
-        <activity android:name=".NotificationSomething"></activity>
+        <activity android:name=".Config" />
+        <activity android:name=".NotificationSomething" />
+        <activity android:name=".TimeLogActivity"></activity>
     </application>
 
 </manifest>
