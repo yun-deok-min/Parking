@@ -17,8 +17,8 @@ public class LogAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         TextView entered_txt = (TextView) view.findViewById(R.id.entered_txt);
         TextView exited_txt = (TextView) view.findViewById(R.id.exited_txt);
-        String entered_at = cursor.getString(cursor.getColumnIndex("entered_at"));
-        String exited_at = cursor.getString(cursor.getColumnIndex("exited_at"));
+        String entered_at = cursor.getString(cursor.getColumnIndex(TimeLogTable.Start));
+        String exited_at = cursor.getString(cursor.getColumnIndex(TimeLogTable.End));
         entered_txt.setText(entered_at);
         exited_txt.setText(exited_at);
     }

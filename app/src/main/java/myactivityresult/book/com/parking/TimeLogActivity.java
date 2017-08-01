@@ -38,12 +38,26 @@ public class TimeLogActivity extends AppCompatActivity {
         ArrayList<Integer> entered_array = parser.getEntered_array();
         ArrayList<Integer> exited_array = parser.getExited_array();
 
+        /*
+        pref = getSharedPreferences("save01", Context.MODE_PRIVATE);
+        String carNumber = pref.getString("CarNumber",null);
+        ArrayList<Integer> entered_array = new ArrayList<>();
+        ArrayList<Integer> exited_array = new ArrayList<>();
+        entered_array.add(1501571000);
+        exited_array.add(1501572000);
+        entered_array.add(1501573000);
+        exited_array.add(1501574000);
+        entered_array.add(1501576000);
+        exited_array.add(1501577000);
+        entered_array.add(1501578000);
+        exited_array.add(1501579000);
+        */
+
         SQLiteHelper sqh = new SQLiteHelper(TimeLogActivity.this);
         sqh.setLog(entered_array, exited_array, carNumber);
 
         /* 최신화가 끝나면 리스트 뷰 형식으로 보여줌 */
         Cursor cursor = sqh.getLog(carNumber);
-
         logView = (ListView)findViewById(R.id.listView);
         LogAdapter logList = new LogAdapter(TimeLogActivity.this, cursor,
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
