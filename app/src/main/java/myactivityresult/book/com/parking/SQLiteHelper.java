@@ -9,11 +9,9 @@ import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import static myactivityresult.book.com.parking.CarTable.State;
 import static myactivityresult.book.com.parking.CarTable.VisitCount;
-import static myactivityresult.book.com.parking.MoneyLogTable.Date;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "my_database.db";
@@ -48,7 +46,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
         db.execSQL("ALTER TABLE " + MoneyLogTable.TABLE_NAME + " ADD CONSTRAINT "
                 + MoneyLogTable.TABLE_NAME + "_FK FOREIGN KEY (" + MoneyLogTable.CarNumber
-                + ") PREFERENCES " + CarTable.TABLE_NAME + " (" + CarTable.CarNumber + ");" );*/
+                + ") REFERENCES " + CarTable.TABLE_NAME + "(" + CarTable.CarNumber + ");" );*/
     }
 
     @Override
@@ -79,33 +77,12 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public void addMoneyLog(String Date, String CarNumber, int fare){
         ContentValues contentvalues = new ContentValues();
 
-        contentvalues.put(Date, Date);
+        contentvalues.put(MoneyLogTable.Date, Date);
         contentvalues.put(MoneyLogTable.CarNumber, CarNumber);
         contentvalues.put(MoneyLogTable.Fare, fare);
 
         SQLiteDatabase sqlDB = getWritableDatabase();
         sqlDB.insert(MoneyLogTable.TABLE_NAME, MoneyLogTable.CarNumber, contentvalues);
-    }
-
-    public void addTimeLog(int start_at, int end_at){
-        ContentValues contentvalues = new ContentValues();
-
-        contentvalues.put(TimeLogTable.Start, start_at);   // yy:MM:dd
-        contentvalues.put(TimeLogTable.End, end_at);       // yy:MM:dd
-
-        SQLiteDatabase sqlDB = getWritableDatabase();
-        sqlDB.insert(TimeLogTable.TABLE_NAME, TimeLogTable.Start, contentvalues);
-    }
-
-    public void addTimeLog(ArrayList<Integer> start_at, ArrayList<Integer> end_at){
-        ContentValues contentvalues = new ContentValues();
-
-        SQLiteDatabase sqlDB = getWritableDatabase();
-        for(int i=0; i<start_at.size(); i++) {
-            contentvalues.put(TimeLogTable.Start, start_at.get(i));  // yy:MM:dd
-            contentvalues.put(TimeLogTable.End, end_at.get(i));      // yy:MM:dd
-            sqlDB.insert(TimeLogTable.TABLE_NAME, TimeLogTable.Start, contentvalues);
-        }
     }
 
     public Cursor getAllDatabase(String TableName){
@@ -117,32 +94,24 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public Cursor getMonthlyFare(String CarNumber, int year, int month){
+    public Cursor getMonthlyFare(String CarNumber, int year, int month){ // yyyy-MM-dd
         SQLiteDatabase sqlDB = getWritableDatabase();
 
         String[] columns = new String[] { MoneyLogTable.Fare };
-        String date = String.valueOf(year) + ":" + String.valueOf(month) + ":*";
+        String date;
+        if(month < 10) {
+            date = String.valueOf(year) + "-0" + String.valueOf(month);
+        }
+        else{
+            date = String.valueOf(year) + "-" + String.valueOf(month);
+        }
         String[] selectionArgs = new String[] { date, CarNumber };
 
         Cursor cursor = sqlDB.query(MoneyLogTable.TABLE_NAME, columns,
-                MoneyLogTable.Date + "= ?" + " AND " + MoneyLogTable.CarNumber + "= ?"
+                "substr(" + MoneyLogTable.Date + ",1,7) = ? AND " + MoneyLogTable.CarNumber + "= ?"
                 , selectionArgs, null, null, null);
-        return cursor;
-    }
 
-    public  Cursor getMonthlyFare(String CarNumber, int month){
-        SQLiteDatabase sqlDB = getWritableDatabase();
-
-        String query = "SELECT " + MoneyLogTable.Fare +
-                " FROM " + MoneyLogTable.TABLE_NAME +
-                " WHERE " + Date + "= ?" +
-                " AND " + MoneyLogTable.CarNumber + "= ?" + ";";
-
-        Calendar now = Calendar.getInstance();
-        int year = now.get(Calendar.DAY_OF_YEAR);
-        String date = String.valueOf(year) + ":" + String.valueOf(month) + ":*";
-        String[] selectionArgs = new String[] { date, CarNumber };
-        Cursor cursor = sqlDB.rawQuery(query, selectionArgs);
+        // where substring(date, 1, 7) = 2017-07 and car_number = 88허1234
         return cursor;
     }
 
@@ -151,7 +120,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         String[] whereArgs = new String[] { CarNumber };
 
         sqlDB.delete(CarTable.TABLE_NAME, CarTable.CarNumber + "= ?", whereArgs);
-        // 학생이 등록된 모든 클래스 매핑을 제거
+
         int result = sqlDB.delete(CarTable.TABLE_NAME, CarTable.CarNumber + "= ?", whereArgs);
         return (result > 0);
     }
@@ -176,8 +145,11 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public Cursor getLog(String car_number){
         SQLiteDatabase db = getReadableDatabase();
         String[] selectionArgs = new String[] { car_number };
-        return db.rawQuery("select * from " + TimeLogTable.TABLE_NAME +
-                " where " + TimeLogTable.CarNumber + " = ?;", selectionArgs);
+        return db.rawQuery("select * from " + TimeLogTable.TABLE_NAME + " where " + TimeLogTable.CarNumber
+                + " = ? order by " +  TimeLogTable.Start + " desc;", selectionArgs);
+        // 커서 어댑터를 사용하기 위해서 id 컬럼을 반드시 포함해서 반환
+       // return db.rawQuery("select " + TimeLogTable.Start + ", " + TimeLogTable.End + " from
+        //        + TimeLogTable.TABLE_NAME + " where " + TimeLogTable.CarNumber + " = ?;", selectionArgs);
     }
 
     public int getVisitCount(String CarNumber){

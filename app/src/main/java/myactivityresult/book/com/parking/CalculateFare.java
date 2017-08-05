@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +29,7 @@ public class CalculateFare extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calculate_fare);
 
@@ -65,12 +67,13 @@ public class CalculateFare extends AppCompatActivity {
         BetweenHour = Integer.parseInt(EndHour) - Integer.parseInt(StartHour);
         BetweenMinute = Integer.parseInt(EndMinute) - Integer.parseInt(StartMinute);
 
+        int fare;
         if(BetweenMinute <= 30){
-            int fare = 10000 * BetweenHour + 5000;  // 5000, 15000
+            fare = 10000 * BetweenHour + 5000;  // 5000, 15000
             Fare.setText("요금 : " + fare);
         }
         else{
-            int fare = 10000 * (BetweenHour + 1) ;  // 10000, 20000
+            fare = 10000 * (BetweenHour + 1) ;  // 10000, 20000
             Fare.setText("요금 : " + fare);
         }
     }

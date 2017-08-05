@@ -17,6 +17,7 @@ public class JSONParser {
     private int zone_index;
     private int floor;
     private int empty_space;
+    private int virtual_money;
 
     private ArrayList<Integer> entered_array;
     private ArrayList<Integer> exited_array;
@@ -24,6 +25,8 @@ public class JSONParser {
     public JSONParser(String dbStr){
         this.dbStr = dbStr;
         empty_space = 0;
+        entered_array = new ArrayList<>();
+        exited_array = new ArrayList<>();
     }
 
     public void parser(int select){
@@ -52,7 +55,10 @@ public class JSONParser {
         }
     }
     public void parser_array(SharedPreferences pref){
-        int last_index = pref.getInt("last_index", 0);
+        String carNumber = pref.getString("CarNumber",null);
+        int last_index = pref.getInt(carNumber + "_last_index", 0);
+        //Log.d("test", "last_index : " + last_index);
+        //Log.d("test", "dbStr : " + dbStr);
         try{
             JSONObject json = new JSONObject(dbStr);
             JSONArray jsonArray = json.getJSONArray("entering_logs");
@@ -64,8 +70,9 @@ public class JSONParser {
             }
         } catch(JSONException e){}
 
+        //Log.d("test", "last_index : " + last_index);
         SharedPreferences.Editor editor = pref.edit();
-        editor.putInt("last_index",last_index);
+        editor.putInt(carNumber + "_last_index",last_index);
         editor.commit();
     }
 
@@ -90,4 +97,5 @@ public class JSONParser {
     public int getEmpty_space() { return empty_space; }
     public ArrayList<Integer> getEntered_array(){ return entered_array; }
     public ArrayList<Integer> getExited_array(){ return exited_array; }
+    public int getVirtual_money(){return virtual_money; }
 }
