@@ -22,8 +22,15 @@
         <activity android:name=".CalculateFare" />
         <activity android:name=".MyCarPosition" />
         <activity android:name=".Config" />
-        <activity android:name=".NotificationSomething" />
-        <activity android:name=".TimeLogActivity"></activity>
+        <activity android:name=".NotificationNoSpace" />
+        <activity android:name=".TimeLogActivity" />
+
+        <service
+            android:name=".MoneyAlarmService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity android:name=".NotificationNoMoney"></activity>
     </application>
 
 </manifest>

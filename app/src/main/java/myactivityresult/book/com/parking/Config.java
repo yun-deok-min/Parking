@@ -9,16 +9,25 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class Config extends AppCompatActivity {
+import java.io.Serializable;
+
+public class Config extends AppCompatActivity implements Serializable {
     EditText EdtCarNumber;
     SharedPreferences pref;
     String carNumber;
     DatePicker datePicker;
     Button select_month;
+    CheckBox ServiceOnOff;
+    Config mConfig;
+
+    public Config(){
+        mConfig = this;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +41,22 @@ public class Config extends AppCompatActivity {
            EdtCarNumber = (EditText) findViewById(R.id.EdtCarNumber);
            EdtCarNumber.setText(carNumber);
         }
+
+        ServiceOnOff = (CheckBox)findViewById(R.id.ServiceOnOff);
+        ServiceOnOff.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if( ((CheckBox)v).isChecked()){  // 서비스 시작
+                    Intent intent = new Intent(Config.this, MoneyAlarmService.class);
+                    intent.putExtra("Config", mConfig);
+                    startService(intent);
+                }
+                else{   // 서비스 중지
+                    Intent intent = new Intent(Config.this, MoneyAlarmService.class);
+                    stopService(intent);
+                }
+            }
+        });
     }
 
     public void EnrollCar(View v){
@@ -114,6 +139,11 @@ public class Config extends AppCompatActivity {
             monthly_fare = monthly_fare + daily_fare;
         }
         Toast.makeText(getApplicationContext(), "월 합계 : " + monthly_fare, Toast.LENGTH_LONG).show();
+    }
+
+    public void setServiceOnOff(boolean sw){  // true 면 서비스 시작
+        ServiceOnOff = (CheckBox)findViewById(R.id.ServiceOnOff);
+        ServiceOnOff.setChecked(sw);
     }
 
     public void BackToStartMenu(View v){

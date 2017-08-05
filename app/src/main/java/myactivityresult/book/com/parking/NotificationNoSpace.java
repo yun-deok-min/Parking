@@ -7,12 +7,12 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-public class NotificationSomething extends AppCompatActivity {
+public class NotificationNoSpace extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_notification_something);
+        setContentView(R.layout.activity_notification_no_space);
 
         Intent intent = getIntent();
 

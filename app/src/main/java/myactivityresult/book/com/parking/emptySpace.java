@@ -66,7 +66,7 @@ public class emptySpace extends Thread {
 
     public void MakeNotification(){
         Resources res = context.getResources();
-        Intent intent = new Intent(context, NotificationSomething.class);
+        Intent intent = new Intent(context, NotificationNoSpace.class);
         int NotificationID = 1234;
         intent.putExtra("NotificationID", NotificationID);
         PendingIntent contentIntent = PendingIntent.getActivity
