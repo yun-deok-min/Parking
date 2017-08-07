@@ -49,8 +49,7 @@ public class aeroview extends AppCompatActivity {
                 if(initSpinner == false){
                     initSpinner = true;
                     floor.setSelection(0);       // 1층을 디폴트 값으로
-                    AeroView.loadUrl(url);
-                    // AeroView.loadUrl(url + "1");
+                    AeroView.loadUrl(url + "?floor=1");
                     // task = new ProgressBarTask(url + "1", AeroView, progressBar);
                     // task.execute();
                     return;
@@ -58,13 +57,13 @@ public class aeroview extends AppCompatActivity {
 
                 switch (position){
                     case 0 :  // 1층 조감도
-                        AeroView.loadUrl(url);
-                        // task = new ProgressBarTask(url + "1", AeroView, progressBar);
+                        AeroView.loadUrl(url + "?floor=1");
+                        // task = new ProgressBarTask(url + "/1", AeroView, progressBar);
                         // task.execute();
                         break;
                     case 1 :  // 2층 조감도
-                        AeroView.loadUrl(url);
-                        // task = new ProgressBarTask(url + "2", AeroView, progressBar);
+                        AeroView.loadUrl(url + "?floor=2");
+                        // task = new ProgressBarTask(url + "/2", AeroView, progressBar);
                         // task.execute();
                         break;
                     default :

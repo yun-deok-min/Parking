@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +18,8 @@ import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import java.lang.reflect.Field;
 
 public class Config extends AppCompatActivity {
     EditText EdtCarNumber;
@@ -113,7 +116,6 @@ public class Config extends AppCompatActivity {
         datePicker = (DatePicker)findViewById(R.id.datePicker);
         datePicker.setVisibility(View.VISIBLE);
 
-        /*
         try{
             Field[] f = datePicker.getClass().getDeclaredFields();
             for(int i =0; i<f.length; i++){
@@ -143,7 +145,7 @@ public class Config extends AppCompatActivity {
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
-        */
+
         select_month = (Button)findViewById(R.id.select_month);
         select_month.setVisibility(View.VISIBLE);
     }
