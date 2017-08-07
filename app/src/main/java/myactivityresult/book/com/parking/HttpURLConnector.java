@@ -1,5 +1,9 @@
 package myactivityresult.book.com.parking;
 
+import android.util.Log;
+
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -13,17 +17,18 @@ public class HttpURLConnector extends Thread {
     private String result;
     final static int GET = 1000;
     final static int POST = 1001;
-    private int mode = GET;  // 기본 모드는 GET 으로
-    String send_json;
+    private int mode;  // 기본 모드는 GET 으로
+    JSONObject jsonObject;
 
     public HttpURLConnector(String url_str) {
         this.url_str = url_str;
+        mode = GET;
     }
 
-    public HttpURLConnector(String url_str, int mode, String send_json) {
+    public HttpURLConnector(String url_str, int mode, JSONObject jsonObject) {
         this.url_str = url_str;
         this.mode = mode;
-        this.send_json = send_json;
+        this.jsonObject = jsonObject;
     }
 
     public void run(){
@@ -41,9 +46,6 @@ public class HttpURLConnector extends Thread {
                     conn.setDoOutput(true);
                     conn.setRequestMethod("POST");
                     conn.setRequestProperty("Content-Type", "application/json");
-                    // conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                    // conn.setRequestProperty("Accept", "*/*");
-                    // conn.setRequestProperty("X-Requested-With", "XMLHttpRequest");
                 }
                 conn.setConnectTimeout(10000);
             }
@@ -54,7 +56,8 @@ public class HttpURLConnector extends Thread {
         StringBuilder sb = new StringBuilder();
         try {
             int res_code = conn.getResponseCode();
-            // Log.d("test", "연결 상태 code : " + res_code);
+            Log.d("test", "연결 상태 code : " + res_code);
+            Log.d("test",jsonObject.toString());
 
             if (res_code == HttpURLConnection.HTTP_OK) {
                 if(mode == GET) {
@@ -70,7 +73,7 @@ public class HttpURLConnector extends Thread {
                 }
                 else if(mode == POST){
                     OutputStream os = conn.getOutputStream();
-                    os.write(send_json.getBytes("euc-kr")); // UTF-8
+                    os.write(jsonObject.toString().getBytes("euc-kr")); // UTF-8
                     os.flush();
                     os.close();
                 }

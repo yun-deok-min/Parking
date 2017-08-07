@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +14,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class NotificationNoMoney extends AppCompatActivity {
     final static int GET = 1000;
@@ -52,16 +56,21 @@ public class NotificationNoMoney extends AppCompatActivity {
 
     public void Charge(View v){
         EditText charge_money = (EditText)findViewById(R.id.charge_money);
-        /*SharedPreferences pref = getSharedPreferences("save01", Context.MODE_PRIVATE);
+        SharedPreferences pref = getSharedPreferences("save01", Context.MODE_PRIVATE);
         String CarNumber = pref.getString("CarNumber","");
         String url="http://13.124.74.249:3000/cars/";  // API 요청
-        String message_json = "\"car\":{\"numbering\":\""+ CarNumber + "\","
-                + "\"money\":" + charge_money.getText().toString() + "}";
-        HttpURLConnector conn = new HttpURLConnector(url + CarNumber + "/charge_money", POST, message_json);
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("amount", Integer.parseInt(charge_money.getText().toString()));
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        Log.d("test","주소 : " + url + CarNumber + "/charge_money");
+        HttpURLConnector conn = new HttpURLConnector(url + CarNumber + "/charge_money", POST, jsonObject);
         conn.start();
         try{
             conn.join();
-        } catch(InterruptedException e){};*/
+        } catch(InterruptedException e){};
 
         Toast.makeText(getApplicationContext(), charge_money.getText().toString()
                 + "원이 충전되었습니다", Toast.LENGTH_LONG).show();
