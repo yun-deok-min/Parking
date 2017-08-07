@@ -5,11 +5,14 @@ import android.util.Log;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import static java.net.HttpURLConnection.HTTP_OK;
 
 public class HttpURLConnector extends Thread {
     private String url_str;
@@ -55,12 +58,10 @@ public class HttpURLConnector extends Thread {
 
         StringBuilder sb = new StringBuilder();
         try {
-            int res_code = conn.getResponseCode();
-            Log.d("test", "연결 상태 code : " + res_code);
-            Log.d("test",jsonObject.toString());
-
-            if (res_code == HttpURLConnection.HTTP_OK) {
-                if(mode == GET) {
+            if(mode == GET) {
+                int res_code = conn.getResponseCode();
+                // Log.d("test", "연결 상태 code : " + res_code);
+                if (res_code == HTTP_OK) {
                     BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                     String line = null;
                     while (true) {
@@ -71,23 +72,31 @@ public class HttpURLConnector extends Thread {
                     }
                     reader.close();
                 }
-                else if(mode == POST){
-                    OutputStream os = conn.getOutputStream();
-                    os.write(jsonObject.toString().getBytes("euc-kr")); // UTF-8
-                    os.flush();
-                    os.close();
+                else if(res_code == 422) {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+                    String line = null;
+                    while (true) {
+                        line = reader.readLine();
+                        if (line == null)
+                            break;
+                        sb.append(line + "\n");
+                    }
+                    reader.close();
                 }
             }
-            else if(res_code == 422){
-                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
-                String line = null;
-                while (true) {
-                    line = reader.readLine();
-                    if (line == null)
-                        break;
-                    sb.append(line + "\n");
+            else if (mode == POST) {
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
+                writer.write(jsonObject.toString());
+                writer.close();
+
+                int res_code = conn.getResponseCode();
+
+                if(res_code == HttpURLConnection.HTTP_OK){
+                    Log.d("test", "송신 내용 : " + jsonObject.toString());
                 }
-                reader.close();
+                else{
+                    Log.d("test", "연결 상태 code : " + res_code);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -97,6 +106,7 @@ public class HttpURLConnector extends Thread {
     }
 
     public String getResult(){
+        // Log.d("test", "서버에게 받은 json 내용 : " + result);
         return  result;
     }
 }

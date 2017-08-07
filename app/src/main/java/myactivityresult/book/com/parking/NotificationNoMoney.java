@@ -23,6 +23,7 @@ public class NotificationNoMoney extends AppCompatActivity {
     final static int POST = 1001;
     private ServiceConnection mConnection;
     MoneyAlarmService mService;
+    int gap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +51,13 @@ public class NotificationNoMoney extends AppCompatActivity {
         nm.cancel(NotificationID);  // 알림 닫기
 
         int virtual_money = intent.getIntExtra("VirtualMoney",0);
+        int fare = intent.getIntExtra("Fare",0);
         TextView current_cash = (TextView)findViewById(R.id.current_cash);
         current_cash.setText("현재 충전된 금액 : " + String.valueOf(virtual_money));
+
+        TextView Txt_gap = (TextView)findViewById(R.id.gap);
+        gap = fare - virtual_money;
+        Txt_gap.setText(String.valueOf(gap) + "만큼 요금이 부족합니다");
     }
 
     public void Charge(View v){
@@ -72,6 +78,15 @@ public class NotificationNoMoney extends AppCompatActivity {
             conn.join();
         } catch(InterruptedException e){};
 
+        if(gap <= Integer.parseInt(charge_money.getText().toString())) {
+            if(pref.getBoolean("ServiceOnOff", false)) { // 설정화면 체크 상태 확인
+                mService.setIsRun(true); // 서비스 재시작
+            }
+        }
+        else{
+            Toast.makeText(getApplicationContext(), "돈이 부족합니다", Toast.LENGTH_LONG).show();
+        }
+
         Toast.makeText(getApplicationContext(), charge_money.getText().toString()
                 + "원이 충전되었습니다", Toast.LENGTH_LONG).show();
     }
@@ -80,9 +95,4 @@ public class NotificationNoMoney extends AppCompatActivity {
         finish();
     }
 
-    @Override
-    protected void onDestroy() {
-        mService.setIsRun(true); // 서비스 재시작
-        super.onDestroy();
-    }
 }

@@ -10,9 +10,7 @@ import java.util.ArrayList;
 
 public class JSONParser {
     private String dbStr;
-    private String numbering;
     private int started_at;
-    private int end_at;
     private String zone_name;
     private int zone_index;
     private int floor;
@@ -37,8 +35,7 @@ public class JSONParser {
             switch (select) {
                 case 1:
                     json2 = json.getJSONObject("car");
-                    numbering = json2.getString("numbering");
-                    started_at = json2.getInt("started_at");
+                    started_at = json2.getInt("entered_at");
 
                     json2 = json.getJSONObject("place");
                     zone_name = json2.getString("zone_name");
@@ -49,6 +46,9 @@ public class JSONParser {
                 case 2:
                     empty_space = json.getInt("empty_places_count");
                     break;
+                case 3:
+                    json2 = json.getJSONObject("car");
+                    virtual_money = json2.getInt("money");
             }
         } catch(JSONException e) {
             e.printStackTrace();
@@ -76,14 +76,8 @@ public class JSONParser {
         editor.commit();
     }
 
-    public String getNumbering(){
-        return numbering;
-    }
     public int getStarted_at(){
         return started_at;
-    }
-    public int getEnd_at(){
-        return end_at;
     }
     public String getZone_name(){
         return zone_name;

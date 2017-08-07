@@ -101,9 +101,11 @@ public class MainActivity extends AppCompatActivity {
         TotalSpace = (TextView)findViewById(R.id.TotalSpace); // 고정값?
         AvailableSpace = (TextView)findViewById(R.id.AvailableSpace);
 
-        Intent intent = new Intent(this, MoneyAlarmService.class);
-        Log.d("test","메인 엑티비티에서 startService");
-        startService(intent);
+        if(pref.getBoolean("ServiceOnOff", true)){
+            Intent intent = new Intent(this, MoneyAlarmService.class);
+            Log.d("test", "메인 엑티비티에서 startService");
+            startService(intent);
+        }
     }
 
     @Override

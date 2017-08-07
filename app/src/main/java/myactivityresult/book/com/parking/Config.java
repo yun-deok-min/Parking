@@ -45,6 +45,10 @@ public class Config extends AppCompatActivity {
            EdtCarNumber.setText(carNumber);
         }
 
+        ServiceOnOff = (CheckBox)findViewById(R.id.ServiceOnOff);
+        service_on_off = pref.getBoolean("ServiceOnOff", true);
+        ServiceOnOff.setChecked(service_on_off);
+
         mConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
@@ -57,12 +61,9 @@ public class Config extends AppCompatActivity {
                 mService = null;
             }
         };
+
         Intent intent = new Intent(Config.this, MoneyAlarmService.class);
         bindService(intent, mConnection, BIND_AUTO_CREATE);
-
-        ServiceOnOff = (CheckBox)findViewById(R.id.ServiceOnOff);
-        service_on_off = pref.getBoolean("ServiceOnOff", true);
-        ServiceOnOff.setChecked(service_on_off);
 
         ServiceOnOff.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,7 +86,9 @@ public class Config extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        unbindService(mConnection);
+        if(service_on_off) {
+            unbindService(mConnection);
+        }
         super.onStop();
     }
 
@@ -153,7 +156,6 @@ public class Config extends AppCompatActivity {
     public void SumDailyMoney(View v){
         int year = datePicker.getYear();
         int month = datePicker.getMonth() + 1;
-        //Toast.makeText(getApplicationContext(), year + "년 " + month +"월", Toast.LENGTH_LONG).show();
 
         int monthly_fare = 0;
         int daily_fare;
@@ -168,11 +170,6 @@ public class Config extends AppCompatActivity {
             monthly_fare = monthly_fare + daily_fare;
         }
         Toast.makeText(getApplicationContext(), "월 합계 : " + monthly_fare, Toast.LENGTH_LONG).show();
-    }
-
-    public void setServiceOnOff(boolean sw){  // true 면 서비스 시작
-        ServiceOnOff = (CheckBox)findViewById(R.id.ServiceOnOff);
-        ServiceOnOff.setChecked(sw);
     }
 
     public void BackToStartMenu(View v){
