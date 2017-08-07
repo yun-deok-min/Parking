@@ -30,7 +30,7 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".NotificationNoMoney"></activity>
+        <activity android:name=".NotificationNoMoney" />
     </application>
 
 </manifest>

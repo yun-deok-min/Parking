@@ -8,6 +8,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -27,6 +28,7 @@ public class NotificationNoMoney extends AppCompatActivity {
         mConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
+                Log.d("test","NotiNoMoney 에서 onServiceConnected 실행");
                 MoneyAlarmService.LocalBinder binder = (MoneyAlarmService.LocalBinder) service;
                 mService = binder.getService();
             }
@@ -37,7 +39,6 @@ public class NotificationNoMoney extends AppCompatActivity {
         };
         Intent ServiceIntent = new Intent(this, MoneyAlarmService.class);
         bindService(ServiceIntent, mConnection, BIND_AUTO_CREATE);
-        mService.setIsRun(false); // 충전 끝날 때 까지 서비스 중지
 
         Intent intent = getIntent();
         int NotificationID = intent.getIntExtra("NotificationID", 0);
@@ -53,10 +54,10 @@ public class NotificationNoMoney extends AppCompatActivity {
         EditText charge_money = (EditText)findViewById(R.id.charge_money);
         /*SharedPreferences pref = getSharedPreferences("save01", Context.MODE_PRIVATE);
         String CarNumber = pref.getString("CarNumber","");
-        String url="http://13.124.74.249:3000/charge/";  // API 요청
+        String url="http://13.124.74.249:3000/cars/";  // API 요청
         String message_json = "\"car\":{\"numbering\":\""+ CarNumber + "\","
                 + "\"money\":" + charge_money.getText().toString() + "}";
-        HttpURLConnector conn = new HttpURLConnector(url + CarNumber, POST, message_json);
+        HttpURLConnector conn = new HttpURLConnector(url + CarNumber + "/charge_money", POST, message_json);
         conn.start();
         try{
             conn.join();
@@ -64,6 +65,10 @@ public class NotificationNoMoney extends AppCompatActivity {
 
         Toast.makeText(getApplicationContext(), charge_money.getText().toString()
                 + "원이 충전되었습니다", Toast.LENGTH_LONG).show();
+    }
+
+    public void End(View v){
+        finish();
     }
 
     @Override

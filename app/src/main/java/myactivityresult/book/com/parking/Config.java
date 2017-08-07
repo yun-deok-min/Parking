@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -44,6 +45,7 @@ public class Config extends AppCompatActivity {
         mConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
+                Log.d("test","Config에서 onServiceConnected 실행");
                 MoneyAlarmService.LocalBinder binder = (MoneyAlarmService.LocalBinder) service;
                 mService = binder.getService();
             }

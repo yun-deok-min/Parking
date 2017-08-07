@@ -12,7 +12,7 @@ import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
 import java.util.Calendar;
@@ -66,18 +66,21 @@ public class MoneyAlarmService extends Service implements Runnable{
         Log.d("test","run 실행");
         virtual_money = 10000;
         fare = 0;
-        while (isRun){
-            // virtual_money = getVirtual_money();
-            // fare = getFare();
-            fare = fare + 2000;
+        while (true) {
+            while (isRun) {
+                // virtual_money = getVirtual_money();
+                // fare = getFare();
+                fare = fare + 2000;
 
-            if(fare > virtual_money){
-                this.MakeNotification();
+                if (fare > virtual_money) {
+                    this.MakeNotification();
+                }
             }
 
-            try{
+            try {
                 Thread.sleep(1000); // 요금이 늘어나는 시간에 따라서 주기 조정
-            }catch(InterruptedException e){ }
+            } catch (InterruptedException e) {
+            }
         }
     }
 
@@ -88,10 +91,19 @@ public class MoneyAlarmService extends Service implements Runnable{
     }
 
     public void setIsRun(boolean isRun){
-       this.isRun = isRun;
+        if(isRun){
+            Log.d("test","isRun = true");
+        }
+        else{
+            Log.d("test","isRun = false");
+        }
+        this.isRun = isRun;
     }
 
     public void MakeNotification(){
+        Log.d("test","알람 띄우면서 서비스 중지");
+        setIsRun(false); // 서비스 일시 중지
+
         Resources res = getResources();
         Intent intent = new Intent(this, NotificationNoMoney.class);
         int NotificationID = 12345;

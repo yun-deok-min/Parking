@@ -8,6 +8,7 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
@@ -101,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
         AvailableSpace = (TextView)findViewById(R.id.AvailableSpace);
 
         Intent intent = new Intent(this, MoneyAlarmService.class);
+        Log.d("test","메인 엑티비티에서 startService");
         startService(intent);
     }
 
