@@ -1,29 +1,45 @@
 package myactivityresult.book.com.parking;
 
 import android.app.NotificationManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class NotificationNoMoney extends AppCompatActivity {
-    Config mConfig;
     final static int GET = 1000;
     final static int POST = 1001;
+    private ServiceConnection mConnection;
+    MoneyAlarmService mService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification_no_money);
 
-        Intent intent = getIntent();
-        mConfig = (Config) intent.getSerializableExtra("Config");
-        mConfig.setServiceOnOff(false); // 서비스 중지
+        mConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                MoneyAlarmService.LocalBinder binder = (MoneyAlarmService.LocalBinder) service;
+                mService = binder.getService();
+            }
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                mService = null;
+            }
+        };
+        Intent ServiceIntent = new Intent(this, MoneyAlarmService.class);
+        bindService(ServiceIntent, mConnection, BIND_AUTO_CREATE);
+        mService.setIsRun(false); // 충전 끝날 때 까지 서비스 중지
 
+        Intent intent = getIntent();
         int NotificationID = intent.getIntExtra("NotificationID", 0);
         NotificationManager nm = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
         nm.cancel(NotificationID);  // 알림 닫기
@@ -32,23 +48,27 @@ public class NotificationNoMoney extends AppCompatActivity {
         TextView current_cash = (TextView)findViewById(R.id.current_cash);
         current_cash.setText("현재 충전된 금액 : " + String.valueOf(virtual_money));
     }
-    
+
     public void Charge(View v){
         EditText charge_money = (EditText)findViewById(R.id.charge_money);
-        int money = Integer.parseInt(charge_money.getText().toString() );
-        SharedPreferences pref = getSharedPreferences("save01", Context.MODE_PRIVATE);
+        /*SharedPreferences pref = getSharedPreferences("save01", Context.MODE_PRIVATE);
         String CarNumber = pref.getString("CarNumber","");
         String url="http://13.124.74.249:3000/charge/";  // API 요청
-        HttpURLConnector conn = new HttpURLConnector(url + CarNumber, POST);
+        String message_json = "\"car\":{\"numbering\":\""+ CarNumber + "\","
+                + "\"money\":" + charge_money.getText().toString() + "}";
+        HttpURLConnector conn = new HttpURLConnector(url + CarNumber, POST, message_json);
         conn.start();
         try{
             conn.join();
-        } catch(InterruptedException e){};
+        } catch(InterruptedException e){};*/
+
+        Toast.makeText(getApplicationContext(), charge_money.getText().toString()
+                + "원이 충전되었습니다", Toast.LENGTH_LONG).show();
     }
 
     @Override
     protected void onDestroy() {
-        mConfig.setServiceOnOff(true); // 서비스 재시작
+        mService.setIsRun(true); // 서비스 재시작
         super.onDestroy();
     }
 }

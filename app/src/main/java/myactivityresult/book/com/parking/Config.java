@@ -1,10 +1,13 @@
 package myactivityresult.book.com.parking;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
@@ -14,20 +17,16 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.io.Serializable;
-
-public class Config extends AppCompatActivity implements Serializable {
+public class Config extends AppCompatActivity {
     EditText EdtCarNumber;
     SharedPreferences pref;
     String carNumber;
     DatePicker datePicker;
     Button select_month;
     CheckBox ServiceOnOff;
-    Config mConfig;
-
-    public Config(){
-        mConfig = this;
-    }
+    boolean service_on_off;
+    private ServiceConnection mConnection;
+    MoneyAlarmService mService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,21 +41,47 @@ public class Config extends AppCompatActivity implements Serializable {
            EdtCarNumber.setText(carNumber);
         }
 
+        mConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                MoneyAlarmService.LocalBinder binder = (MoneyAlarmService.LocalBinder) service;
+                mService = binder.getService();
+            }
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                mService = null;
+            }
+        };
+        Intent intent = new Intent(Config.this, MoneyAlarmService.class);
+        bindService(intent, mConnection, BIND_AUTO_CREATE);
+
         ServiceOnOff = (CheckBox)findViewById(R.id.ServiceOnOff);
+        service_on_off = pref.getBoolean("ServiceOnOff", true);
+        ServiceOnOff.setChecked(service_on_off);
+
         ServiceOnOff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if( ((CheckBox)v).isChecked()){  // 서비스 시작
-                    Intent intent = new Intent(Config.this, MoneyAlarmService.class);
-                    intent.putExtra("Config", mConfig);
-                    startService(intent);
+                    mService.setIsRun(true);
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putBoolean("ServiceOnOff", true);
+                    editor.commit();
                 }
                 else{   // 서비스 중지
-                    Intent intent = new Intent(Config.this, MoneyAlarmService.class);
-                    stopService(intent);
+                    mService.setIsRun(false);
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putBoolean("ServiceOnOff", false);
+                    editor.commit();
                 }
             }
         });
+    }
+
+    @Override
+    protected void onStop() {
+        unbindService(mConnection);
+        super.onStop();
     }
 
     public void EnrollCar(View v){

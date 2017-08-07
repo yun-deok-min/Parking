@@ -19,8 +19,6 @@ public class emptySpace extends Thread {
     private int emptySpace;
     private String result;
     Context context;
-    final static int GET = 1000;
-    final static int POST = 1001;
     Handler handler;
     private boolean isRun = false;
 
@@ -33,7 +31,7 @@ public class emptySpace extends Thread {
     public void run(){
         while(isRun) {
             String url = "http://13.124.74.249:3000/empty_places_count"; // 여유 칸 보내주는 API 주소 나중에 추가
-            conn = new HttpURLConnector(url, GET);
+            conn = new HttpURLConnector(url);
             conn.start();
             try{
                 conn.join();

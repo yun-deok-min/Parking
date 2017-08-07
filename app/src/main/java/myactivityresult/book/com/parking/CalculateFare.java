@@ -23,8 +23,6 @@ public class CalculateFare extends AppCompatActivity {
     HttpURLConnector conn;
     JSONParser jsonParser;
     final static int NotFound = 0;
-    final static int GET = 1000;
-    final static int POST = 1001;
     int start_at = NotFound ;
 
     @Override
@@ -90,7 +88,7 @@ public class CalculateFare extends AppCompatActivity {
         EdtStartMinute = (EditText)findViewById(R.id.EdtStartMinute);
 
         String url="http://13.124.74.249:3000/cars/";
-        conn = new HttpURLConnector(url + CarNumber, GET);
+        conn = new HttpURLConnector(url + CarNumber);
         conn.start();
         try{
             conn.join();

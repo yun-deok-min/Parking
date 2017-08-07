@@ -19,8 +19,6 @@ public class TimeLogActivity extends AppCompatActivity {
     ListView logView;
     TextView visit_count_txt;
     SharedPreferences pref;
-    final static int GET = 1000;
-    final static int POST = 1001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +30,7 @@ public class TimeLogActivity extends AppCompatActivity {
         pref = getSharedPreferences("save01", Context.MODE_PRIVATE);
         String carNumber = pref.getString("CarNumber",null);
 
-        HttpURLConnector conn = new HttpURLConnector("http://13.124.74.249:3000/entering_logs/" + carNumber, GET);
+        HttpURLConnector conn = new HttpURLConnector("http://13.124.74.249:3000/entering_logs/" + carNumber);
         conn.start();
         try{
             conn.join();

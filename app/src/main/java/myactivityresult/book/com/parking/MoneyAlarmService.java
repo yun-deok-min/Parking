@@ -9,37 +9,86 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
+import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import java.util.Calendar;
 
-public class MoneyAlarmService extends Service {
-    Config mConfig;
-    final static int GET = 1000;
-    final static int POST = 1001;
+public class MoneyAlarmService extends Service implements Runnable{
+    public class LocalBinder extends Binder{
+        public MoneyAlarmService getService(){
+            return MoneyAlarmService.this;
+        }
+    }
+    private final IBinder binder = new LocalBinder();
 
-    public MoneyAlarmService() { }
+    private boolean isRun = true;
+    private int virtual_money;
+    private int fare;
+
+    @Override
+    public void onCreate() {
+        Log.d("test","onCreate 실행");
+        Thread myThread = new Thread(this);
+        myThread.start();
+
+        super.onCreate();
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        mConfig = (Config) intent.getSerializableExtra("Config");
-
-        int virtual_money = getVirtual_money();
-        int fare = getFare();
-
-        if(fare > virtual_money){
-            this.MakeNotification();
-        }
-
+        Log.d("test","onStartCommand 실행");
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
+    public void onDestroy() {
+        Log.d("test","onDestroy 실행");
+        super.onDestroy();
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        Log.d("test","onUnbind 실행");
+        return super.onUnbind(intent);
+    }
+
+    @Override
+    public void onRebind(Intent intent) {
+        Log.d("test","onRebind 실행");
+        super.onRebind(intent);
+    }
+
+    public void run(){
+        Log.d("test","run 실행");
+        virtual_money = 10000;
+        fare = 0;
+        while (isRun){
+            // virtual_money = getVirtual_money();
+            // fare = getFare();
+            fare = fare + 2000;
+
+            if(fare > virtual_money){
+                this.MakeNotification();
+            }
+
+            try{
+                Thread.sleep(1000); // 요금이 늘어나는 시간에 따라서 주기 조정
+            }catch(InterruptedException e){ }
+        }
+    }
+
+    @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
+        Log.d("test","onBind 실행");
+        return binder;
+    }
+
+    public void setIsRun(boolean isRun){
+       this.isRun = isRun;
     }
 
     public void MakeNotification(){
@@ -47,8 +96,7 @@ public class MoneyAlarmService extends Service {
         Intent intent = new Intent(this, NotificationNoMoney.class);
         int NotificationID = 12345;
         intent.putExtra("NotificationID", NotificationID);
-        intent.putExtra("Config", mConfig);
-        intent.putExtra("VirtualMoney", getVirtual_money());
+        intent.putExtra("VirtualMoney", virtual_money);
         PendingIntent contentIntent = PendingIntent.getActivity
                 (this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
@@ -73,7 +121,7 @@ public class MoneyAlarmService extends Service {
         SharedPreferences pref = getSharedPreferences("save01", Context.MODE_PRIVATE);
         String CarNumber = pref.getString("CarNumber","");
         String url="http://13.124.74.249:3000/virtual_money/";  // API 요청
-        HttpURLConnector conn = new HttpURLConnector(url + CarNumber, GET);
+        HttpURLConnector conn = new HttpURLConnector(url + CarNumber);
         conn.start();
         try{
             conn.join();
@@ -90,7 +138,7 @@ public class MoneyAlarmService extends Service {
         SharedPreferences pref = getSharedPreferences("save01", Context.MODE_PRIVATE);
         String CarNumber = pref.getString("CarNumber","");
         String url="http://13.124.74.249:3000/cars/";
-        HttpURLConnector conn = new HttpURLConnector(url + CarNumber, GET);
+        HttpURLConnector conn = new HttpURLConnector(url + CarNumber);
         conn.start();
         try{
             conn.join();
@@ -122,5 +170,4 @@ public class MoneyAlarmService extends Service {
         }
         return fare;
     }
-
 }
