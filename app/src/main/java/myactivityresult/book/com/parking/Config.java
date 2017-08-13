@@ -21,16 +21,17 @@ import android.widget.Toast;
 
 import java.lang.reflect.Field;
 
+/* 다양한 설정과 부가적인 기능을 처리하는 액티비티 */
 public class Config extends AppCompatActivity {
     EditText EdtCarNumber;
     SharedPreferences pref;
     String carNumber;
-    DatePicker datePicker;
+    DatePicker datePicker; // 날짜를 선택할 수 있는 UI
     Button select_month;
-    CheckBox ServiceOnOff;
+    CheckBox ServiceOnOff;  // 보유 머니와 요금을 비교하는 서비스를 켜고 끄는 것을 설정
     boolean service_on_off;
-    private ServiceConnection mConnection;
-    MoneyAlarmService mService;
+    private ServiceConnection mConnection;  // 서비스를 bind 하기 위해서
+    MoneyAlarmService mService; // 보유 머니와 요금을 비교하는 서비스 객체
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +39,7 @@ public class Config extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_config);
 
+        /* 차량 번호가 등록되어 있다면 표시 */
         pref = getSharedPreferences("save01", Context.MODE_PRIVATE);
         carNumber = pref.getString("CarNumber","");
         if(!carNumber.equals("")) {
@@ -45,26 +47,30 @@ public class Config extends AppCompatActivity {
            EdtCarNumber.setText(carNumber);
         }
 
+        /* 체크 박스에 접근한 적이 없으면 체크한 상태로 설정 */
         ServiceOnOff = (CheckBox)findViewById(R.id.ServiceOnOff);
         service_on_off = pref.getBoolean("ServiceOnOff", true);
         ServiceOnOff.setChecked(service_on_off);
 
+        /* 서비스 bind 설정 */
         mConnection = new ServiceConnection() {
-            @Override
+            @Override // bindService 메소드 실행 시 호출되는 콜백 메소드
             public void onServiceConnected(ComponentName name, IBinder service) {
-                Log.d("test","Config에서 onServiceConnected 실행");
+                Log.d("test","Config 에서 onServiceConnected 실행");
                 MoneyAlarmService.LocalBinder binder = (MoneyAlarmService.LocalBinder) service;
                 mService = binder.getService();
             }
-            @Override
+            @Override // 비정상적으로 종료되었 을 때 호출되는 콜백 메소드
             public void onServiceDisconnected(ComponentName name) {
                 mService = null;
             }
         };
 
+        /* 서비스 연결 */
         Intent intent = new Intent(Config.this, MoneyAlarmService.class);
         bindService(intent, mConnection, BIND_AUTO_CREATE);
 
+        /* 체크박스 클릭 시 처리 메소드 */
         ServiceOnOff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,6 +98,7 @@ public class Config extends AppCompatActivity {
         super.onStop();
     }
 
+    /* 차량 번호 등록 버튼 누르면 SharedPreferences 로 저장 */
     public void EnrollCar(View v){
         EdtCarNumber = (EditText)findViewById(R.id.EdtCarNumber);
         pref = getSharedPreferences("save01", Context.MODE_PRIVATE);
@@ -103,6 +110,7 @@ public class Config extends AppCompatActivity {
                 "차량 번호가 등록되었습니다.", Toast.LENGTH_LONG).show();
     }
 
+    /* 현재 등록된 차량의 입출차 로그를 보여줌 */
     public void ShowTimeLog(View v){
         carNumber = pref.getString("CarNumber","");
         if(carNumber.equals("")) {
@@ -115,6 +123,7 @@ public class Config extends AppCompatActivity {
         }
     }
 
+    /* 어느 달의 요금 합계를 보여줄지 정하기 위해서 달력 스피너(datePicker)를 보여줌 */
     public void ShowCalendar(View v){
         datePicker = (DatePicker)findViewById(R.id.datePicker);
         datePicker.setVisibility(View.VISIBLE);
@@ -153,6 +162,7 @@ public class Config extends AppCompatActivity {
         select_month.setVisibility(View.VISIBLE);
     }
 
+    /* 달력 스피너(datePicker)에서 선택한 년, 월에 해당하는 날짜들의 주차 요금 합계를 보여줌 */
     public void SumDailyMoney(View v){
         int year = datePicker.getYear();
         int month = datePicker.getMonth() + 1;

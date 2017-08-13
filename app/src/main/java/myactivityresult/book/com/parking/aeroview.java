@@ -13,11 +13,12 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+/* 조감도(주차장 주차 현황 사진)를 보여주는 액티비티 */
 public class aeroview extends AppCompatActivity {
     WebView AeroView;
     Spinner floor;
-    private boolean initSpinner = false;
-    ArrayList<String> FloorData;
+    private boolean initSpinner = false;  // 스피너에 접근한 적이 있는지 판단
+    ArrayList<String> FloorData;    // 스피너 목록 리스트
     ProgressBar progressBar;
 
     @Override
@@ -33,20 +34,24 @@ public class aeroview extends AppCompatActivity {
         FloorData.add("1층");
         FloorData.add("2층");
 
+        // 스피너 이미지를 설정하고 세팅
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_dropdown_item, FloorData);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         floor.setAdapter(adapter);
 
         AeroView.setWebViewClient(new WebViewClient());
-        /* 스피너의 층에 따라서 */
+        // 안드로이드에서는 디폴트로, 다른 링크로 이동하고자 할때는 안드로이드의 디폴트
+        // 외부 웹 브라우져를 통해서 이동하기 때문에 내부 웹뷰 클라이언트 지정
+
+        // 스피너 항목 선택 시 처리 메소드
         floor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id){
                 String url="http://13.124.74.249:3000/places/dashboard";  // 기본 API 주소
                 ProgressBarTask task;
 
-                if(initSpinner == false){
+                if(initSpinner == false){  // 스피너에 처음 접근할 때 설정
                     initSpinner = true;
                     floor.setSelection(0);       // 1층을 디폴트 값으로
                     AeroView.loadUrl(url + "?floor=1");

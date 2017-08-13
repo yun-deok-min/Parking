@@ -32,13 +32,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        /* 디바이스 실제 크기를 가져옴 */
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         int ScreenWidth = size.x;
         int ScreenHeight = size.y;
         screen_rate = new ScreenRate(ScreenWidth, ScreenHeight);
-        screen_rate.setSize(100, 100);
+        screen_rate.setSize(100, 100); // 가상 화면 크기 설정
 
         gridView = (GridView)findViewById(R.id.gridView01);
         gridView.setAdapter(new ImageAdapter(this));
@@ -101,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
         TotalSpace = (TextView)findViewById(R.id.TotalSpace); // 고정값?
         AvailableSpace = (TextView)findViewById(R.id.AvailableSpace);
 
+        // 설정에 서비스를 꺼두지 않았으면 서비스 실행
         if(pref.getBoolean("ServiceOnOff", true)){
             Intent intent = new Intent(this, MoneyAlarmService.class);
             Log.d("test", "메인 엑티비티에서 startService");
@@ -109,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
+    protected void onResume() { // 메인 액티비티가 화면에 표시될 때 스레드 재시작
         empty_space = new emptySpace(AvailableSpace, MainActivity.this);
         empty_space.setRun(true);
         empty_space.start();
@@ -117,11 +119,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
+    protected void onPause() {  // 메인 액티비티가 화면에 표시되지 않을 때 스레드 중지
         empty_space.setRun(false);
         super.onPause();
     }
 
+    /* 메인화면 기능 이미지(버튼)들을 그리드 뷰로 처리하기 위한 어댑터 클래스 */
     class ImageAdapter extends BaseAdapter{
         private Integer[] FunctionImage = {
                 R.drawable.aeroview, R.drawable.calculate_fare,
@@ -153,8 +156,8 @@ public class MainActivity extends AppCompatActivity {
             ImageView imageView;
             if(convertView == null){
                 imageView = new ImageView(mContext);
-                imageView.setLayoutParams(new GridView.LayoutParams(
-                        screen_rate.getX(50), screen_rate.getY(30))); // 아이콘 이미지 가로, 세로
+                imageView.setLayoutParams(new GridView.LayoutParams( // 아이콘 이미지 영역 size 설정
+                        screen_rate.getX(50), screen_rate.getY(30))); // 화면 비율에 따라서 크기 조절
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP); // 이미지 자체 size 조정 및 이동
                 imageView.setPadding(10,10,10,10);  // 상하좌우 여백
             }

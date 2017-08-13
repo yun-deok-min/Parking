@@ -5,6 +5,7 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
 
+/* 작업 처리가 오래 걸릴 경우 처리중 임을 알리기 위한 클래스 */
 public class ProgressBarTask extends AsyncTask<Integer, Integer, Void> {
     HttpURLConnector conn;
     ProgressBar progressBar;

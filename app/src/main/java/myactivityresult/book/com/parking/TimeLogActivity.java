@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+/* 현재 등록된 차량번호에 해당하는 입출차 로그 DB 갱신, 보여주기 및 요금 로그 DB 갱신을 처리하는 액티비티 */
 public class TimeLogActivity extends AppCompatActivity {
     ListView logView;
     TextView visit_count_txt;

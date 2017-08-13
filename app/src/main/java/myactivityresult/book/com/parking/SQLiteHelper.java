@@ -10,9 +10,7 @@ import android.util.Log;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-import static myactivityresult.book.com.parking.CarTable.State;
-import static myactivityresult.book.com.parking.CarTable.VisitCount;
-
+/* DB 관련 처리를 하는 클래스 */
 public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "my_database.db";
     private static final int DATABASE_VERSION = 1;
@@ -25,8 +23,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db){
         db.execSQL("CREATE TABLE " + CarTable.TABLE_NAME + " (" +
                 CarTable.CarNumber + " TEXT PRIMARY KEY, " +
-                State + " TEXT, " +
-                VisitCount + " INTEGER" + ");" );
+                CarTable.State + " TEXT, " +
+                CarTable.VisitCount + " INTEGER" + ");" );
 
         db.execSQL("CREATE TABLE " + MoneyLogTable.TABLE_NAME + " (" +
                 MoneyLogTable.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -148,7 +146,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return db.rawQuery("select * from " + TimeLogTable.TABLE_NAME + " where " + TimeLogTable.CarNumber
                 + " = ? order by " +  TimeLogTable.Start + " desc;", selectionArgs);
         // 커서 어댑터를 사용하기 위해서 id 컬럼을 반드시 포함해서 반환
-       // return db.rawQuery("select " + TimeLogTable.Start + ", " + TimeLogTable.End + " from
+        // return db.rawQuery("select " + TimeLogTable.Start + ", " + TimeLogTable.End + " from
         //        + TimeLogTable.TABLE_NAME + " where " + TimeLogTable.CarNumber + " = ?;", selectionArgs);
     }
 

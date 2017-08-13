@@ -14,16 +14,19 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.StringTokenizer;
 
+/* 입차 시간과 출차 시간을 통해서 요금을 산출하는 액티비티
+*  디비와 현재 시간으로 구할 수 있고 유저가 임의의 시간을 입력해서 확인할 수 도 있음
+* */
 public class CalculateFare extends AppCompatActivity {
     EditText EdtCarNumber, EdtStartHour, EdtStartMinute, EdtEndHour, EdtEndMinute;
     TextView Fare;
     String StartHour, StartMinute, EndHour, EndMinute;
     int BetweenHour, BetweenMinute;
-    private String result; // DB 데이터
+    private String result; // 서버에게 받은 json 데이터 전체
     HttpURLConnector conn;
     JSONParser jsonParser;
-    final static int NotFound = 0;
-    int start_at = NotFound ;
+    final static int NotFound = 1002;
+    int start_at = NotFound ;   // json 데이터를 서버에게 받아와서 성공적으로 파싱했는지 판단
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +53,7 @@ public class CalculateFare extends AppCompatActivity {
         EdtEndMinute.setText(String.valueOf(currentMin));
     }
 
+    /* 요금 계산 하는 메소드 */
     public void Calculate(View v){
         EdtStartHour = (EditText)findViewById(R.id.EdtStartHour);
         EdtStartMinute = (EditText)findViewById(R.id.EdtStartMinute);
@@ -62,6 +66,7 @@ public class CalculateFare extends AppCompatActivity {
         EndHour = EdtEndHour.getText().toString();
         EndMinute = EdtEndMinute.getText().toString();
 
+        // 입출차 시간 사이의 간격을 계산
         BetweenHour = Integer.parseInt(EndHour) - Integer.parseInt(StartHour);
         BetweenMinute = Integer.parseInt(EndMinute) - Integer.parseInt(StartMinute);
 
@@ -76,14 +81,15 @@ public class CalculateFare extends AppCompatActivity {
         }
     }
 
-    public void SearchTime(View v){  // 수동으로 차량 번호를 입력해서 입차 시간 검색
+    /* 수동으로 차량 번호를 입력해서 입차 시간 검색 */
+    public void SearchTime(View v){
         EdtCarNumber = (EditText)findViewById(R.id.EdtCarNumber);
         String CarNumber = EdtCarNumber.getText().toString();
         ShowStartTime(CarNumber);
     }
 
+    /* 서버에게 차번호를 보내서 디비에서 해당 차의 입차시간을 받아옴 */
     public void ShowStartTime(String CarNumber){
-        // 서버에 차번호를 보내서 디비에서 해당 차의 입차시간을 확인해서 서버가 앱에게 입차시간을 전송해서 보여줌
         EdtStartHour = (EditText)findViewById(R.id.EdtStartHour);
         EdtStartMinute = (EditText)findViewById(R.id.EdtStartMinute);
 
@@ -100,18 +106,16 @@ public class CalculateFare extends AppCompatActivity {
 
         start_at = jsonParser.getStarted_at();
 
-        boolean find = false;
         if(start_at != NotFound){
-            find = true;
             getTime(start_at);
         }
-
-        if(!find){
+        else{
             Toast.makeText(getApplicationContext(),
                     "해당 차량은 없습니다.", Toast.LENGTH_LONG).show();
         }
     }
 
+    // 서버에게 받은 입차 시간을 앱에서 사용할 형식으로 변환해서 화면에 보여줌
     public void getTime(int millisec){
         String pattern = "HH:mm";
         long millisec_1 = (long)millisec * 1000L;

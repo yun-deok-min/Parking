@@ -14,18 +14,19 @@ import java.net.URL;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 
+/* url 주소를 받아서 서버와 연결하고 데이터를 받아오는 스레드 */
 public class HttpURLConnector extends Thread {
     private String url_str;
     private HttpURLConnection conn;
     private String result;
     final static int GET = 1000;
     final static int POST = 1001;
-    private int mode;  // 기본 모드는 GET 으로
-    JSONObject jsonObject;
+    private int mode;       // 통신 방법(GET, POST) 구분
+    JSONObject jsonObject;   // POST 형식으로 서버에게 넘겨줄 내용
 
     public HttpURLConnector(String url_str) {
         this.url_str = url_str;
-        mode = GET;
+        mode = GET;   // 기본 모드는 GET 으로
     }
 
     public HttpURLConnector(String url_str, int mode, JSONObject jsonObject) {
@@ -49,6 +50,7 @@ public class HttpURLConnector extends Thread {
                     conn.setDoOutput(true);
                     conn.setRequestMethod("POST");
                     conn.setRequestProperty("Content-Type", "application/json");
+                    // 통신 관련 설정(송수신형식, 캐시 등) 정의
                 }
                 conn.setConnectTimeout(10000);
             }
@@ -59,7 +61,7 @@ public class HttpURLConnector extends Thread {
         StringBuilder sb = new StringBuilder();
         try {
             if(mode == GET) {
-                int res_code = conn.getResponseCode();
+                int res_code = conn.getResponseCode(); // 연결이 제대로 되었는지 확인할 변수
                 // Log.d("test", "연결 상태 code : " + res_code);
                 if (res_code == HTTP_OK) {
                     BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));

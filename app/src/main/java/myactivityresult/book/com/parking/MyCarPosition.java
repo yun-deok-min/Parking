@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/* 차량 번호로 주차장의 어느 위치에 있는지 보여주는 액티비티 */
 public class MyCarPosition extends AppCompatActivity {
     private String result; // DB 데이터
     EditText EdtCarNumber;
@@ -20,7 +21,7 @@ public class MyCarPosition extends AppCompatActivity {
     HttpURLConnector conn;
     JSONParser jsonParser;
     private String CarNumber;
-    final static int NotFound = 0;
+    final static int NotFound = 1002;
     private String zone_name;
     private int zone_index;
     private int floor = NotFound;
@@ -40,11 +41,12 @@ public class MyCarPosition extends AppCompatActivity {
         }
     }
 
-    public void SearchCar(View v){
+    public void SearchCar(View v){ // 차량 위치 검색 버튼을 눌렀을 때
         EdtCarNumber = (EditText)findViewById(R.id.EdtCarNumber);
         CarNumber = EdtCarNumber.getText().toString();
         SearchCar(CarNumber);
     }
+
     public void SearchCar(String CarNumber){
         CarPosition = (TextView)findViewById(R.id.CarPosition);
         ViewMyCar = (WebView)findViewById(R.id.ViewMyCar);
@@ -73,7 +75,7 @@ public class MyCarPosition extends AppCompatActivity {
             CarPosition.setText("위치 : " + space);
 
             String view_url = "http://13.124.74.249:3000/cars/" + space;
-            // cars 는 space 나 aeroview 로 변경 차량 위치를 조감도로 보여줌
+            // 서버측에서 위치정보를 받아서 차량 위치를 조감도로 보여줌
             switch (floor){
                 case 1 :
                     ViewMyCar.loadUrl(view_url);

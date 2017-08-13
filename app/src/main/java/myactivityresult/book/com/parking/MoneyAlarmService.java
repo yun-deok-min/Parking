@@ -17,10 +17,13 @@ import android.util.Log;
 
 import java.util.Calendar;
 
+/* 보유(충전된) 머니와 (실시간)요금을 비교해서 알림을 띄워주는 서비스 */
 public class MoneyAlarmService extends Service implements Runnable{
+
+    // 엑티비티에서 서비스의 함수를 호출하기 위해서 inner 클래스로 서비스 바인더 선언
     public class LocalBinder extends Binder{
         public MoneyAlarmService getService(){
-            return MoneyAlarmService.this;
+            return MoneyAlarmService.this; // 현재 서비스를 반환
         }
     }
     private final IBinder binder = new LocalBinder();
@@ -31,6 +34,7 @@ public class MoneyAlarmService extends Service implements Runnable{
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        // startService()가 실행되었을 때 호출됨
         isRun = true;
         return super.onStartCommand(intent, flags, startId);
     }
@@ -41,6 +45,11 @@ public class MoneyAlarmService extends Service implements Runnable{
         myThread.start();
 
         super.onCreate();
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) { // bindService()가 실행되었을 때 호출됨
+        return binder;
     }
 
     public void run(){
@@ -64,11 +73,6 @@ public class MoneyAlarmService extends Service implements Runnable{
             } catch (InterruptedException e) {
             }
         }
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return binder;
     }
 
     public void setIsRun(boolean isRun){
@@ -164,6 +168,8 @@ public class MoneyAlarmService extends Service implements Runnable{
             int EndMinute = end.get(Calendar.MINUTE);
             int BetweenHour = EndHour - StartHour;
             int BetweenMinute = EndMinute - StartMinute;
+            // Log.d("test", "현재 시간 - " + EndHour + ":" + EndMinute +
+            // " / 입차시간 - " + StartHour + ":" + StartMinute);
 
             if (BetweenMinute <= 30) {
                 fare = 10000 * BetweenHour + 5000;  // 5000, 15000

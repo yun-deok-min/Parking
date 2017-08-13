@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+/* 서버에게 받은 json 내용을 종류별로 나눠서 구분하는 클래스 */
 public class JSONParser {
     private String dbStr;
     private int started_at;
@@ -57,12 +58,13 @@ public class JSONParser {
     public void parser_array(SharedPreferences pref){
         String carNumber = pref.getString("CarNumber",null);
         int last_index = pref.getInt(carNumber + "_last_index", 0);
+        // 차량별로 마지막으로 확인한 입출차 로그의 전후로 분리
         //Log.d("test", "last_index : " + last_index);
         //Log.d("test", "dbStr : " + dbStr);
         try{
             JSONObject json = new JSONObject(dbStr);
             JSONArray jsonArray = json.getJSONArray("entering_logs");
-            for(int i = last_index ; i < jsonArray.length(); i++){
+            for(int i = last_index ; i < jsonArray.length(); i++){ // 새로 추가된 부분만 가져옴
                 JSONObject result = jsonArray.getJSONObject(i);
                 entered_array.add(result.getInt("entered_at"));
                 exited_array.add(result.getInt("exited_at"));

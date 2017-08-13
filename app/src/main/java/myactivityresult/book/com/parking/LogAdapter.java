@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
+/* DB를 검색해서 얻은 Cursor 객체와 레이아웃을 연동해서 처리하는 클래스 */
 public class LogAdapter extends CursorAdapter {
     public LogAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);

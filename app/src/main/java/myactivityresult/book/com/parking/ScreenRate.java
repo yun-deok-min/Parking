@@ -1,5 +1,6 @@
 package myactivityresult.book.com.parking;
 
+/* 실제 디바이스 크기와 가상 화면 크기를 설정해서 비율로 화면 배치를 위한 클래스 */
 public class ScreenRate {
     public int screen_width, screen_height;
     public int virtual_width, virtual_height;
