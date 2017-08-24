@@ -31,6 +31,7 @@ public class MoneyAlarmService extends Service implements Runnable{
     private boolean isRun; // 서비스 실행 flag
     private int virtual_money;
     private int fare;
+    final static int BaseMoney = 1000;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -53,7 +54,7 @@ public class MoneyAlarmService extends Service implements Runnable{
     }
 
     public void run(){
-        Log.d("test","(요금, 보유머니) 비교 스레드 실행");
+        // Log.d("test","(요금, 보유머니) 비교 스레드 실행");
         while (true) {
             while (isRun) {
                 setVirtual_money(); // 서버에서 차량이 보유하고 있는 가상머니 받아옴
@@ -152,31 +153,38 @@ public class MoneyAlarmService extends Service implements Runnable{
             }
             ;
             String result = conn.getResult();
+            // Log.d("test", result);
 
             JSONParser jsonParser = new JSONParser(result);
             jsonParser.parser(1);
 
             int start_at = jsonParser.getStarted_at();
-            long millis = (long) start_at * 1000L;
 
-            Calendar end = Calendar.getInstance();
-            Calendar start = Calendar.getInstance();
-            start.setTimeInMillis(millis);
-            int StartHour = start.get(Calendar.HOUR_OF_DAY);
-            int StartMinute = start.get(Calendar.MINUTE);
-            int EndHour = end.get(Calendar.HOUR_OF_DAY);
-            int EndMinute = end.get(Calendar.MINUTE);
-            int BetweenHour = EndHour - StartHour;
-            int BetweenMinute = EndMinute - StartMinute;
-            // Log.d("test", "현재 시간 - " + EndHour + ":" + EndMinute +
-            // " / 입차시간 - " + StartHour + ":" + StartMinute);
-
-            if (BetweenMinute <= 30) {
-                fare = 10000 * BetweenHour + 5000;  // 5000, 15000
-            } else {
-                fare = 10000 * (BetweenHour + 1);  // 10000, 20000
+            if (start_at == 0) {
+                Log.d("test", "현재 차량이 주차되어 있지 않습니다");
             }
-            Log.d("test", "요금 : " + fare);
+            else {
+                long millis = (long) start_at * 1000L;
+                Calendar end = Calendar.getInstance();
+                Calendar start = Calendar.getInstance();
+                start.setTimeInMillis(millis);
+                int StartSec = start.get(Calendar.SECOND);
+                int StartMinute = start.get(Calendar.MINUTE);
+                int EndSec = end.get(Calendar.SECOND);
+                int EndMinute = end.get(Calendar.MINUTE);
+                int BetweenSec = EndSec - StartSec;
+                int BetweenMinute = EndMinute - StartMinute;
+                Log.d("test", "현재 시간 - " + EndSec + ":" + EndMinute +
+                        " / 입차시간 - " + StartSec + ":" + StartMinute);
+
+                if((BetweenMinute < 1) && (BetweenSec < 10)){
+                    fare = BaseMoney;  // 기본요금
+                }
+                else{
+                    fare = BaseMoney + (int)(BetweenSec / 10) * 1000 + BetweenMinute * 6000 ;
+                }
+                Log.d("test", "요금 : " + fare);
+            }
         }
         else {
             Log.d("test", "차량 번호를 등록해주세요");

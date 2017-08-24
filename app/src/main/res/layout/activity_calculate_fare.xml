@@ -44,17 +44,6 @@
             android:text="입차시간 : "/>
 
         <EditText
-            android:id="@+id/EdtStartHour"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="시"/>
-
-        <EditText
             android:id="@+id/EdtStartMinute"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -64,6 +53,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="분"/>
+
+        <EditText
+            android:id="@+id/EdtStartSec"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="초"/>
     </LinearLayout>
 
     <LinearLayout
@@ -79,17 +79,6 @@
             android:text="출차시간 : "/>
 
         <EditText
-            android:id="@+id/EdtEndHour"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="시"/>
-
-        <EditText
             android:id="@+id/EdtEndMinute"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -99,6 +88,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="분"/>
+
+        <EditText
+            android:id="@+id/EdtEndSec"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="초"/>
     </LinearLayout>
 
     <RelativeLayout

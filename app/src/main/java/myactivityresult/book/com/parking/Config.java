@@ -2,15 +2,19 @@ package myactivityresult.book.com.parking;
 
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -18,6 +22,9 @@ import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.reflect.Field;
 
@@ -32,6 +39,8 @@ public class Config extends AppCompatActivity {
     boolean service_on_off;
     private ServiceConnection mConnection;  // 서비스를 bind 하기 위해서
     MoneyAlarmService mService; // 보유 머니와 요금을 비교하는 서비스 객체
+    final static int GET = 1000;
+    final static int POST = 1001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,13 +110,40 @@ public class Config extends AppCompatActivity {
     /* 차량 번호 등록 버튼 누르면 SharedPreferences 로 저장 */
     public void EnrollCar(View v){
         EdtCarNumber = (EditText)findViewById(R.id.EdtCarNumber);
+        String car_number = EdtCarNumber.getText().toString();
+
         pref = getSharedPreferences("save01", Context.MODE_PRIVATE);
 
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString("CarNumber", EdtCarNumber.getText().toString() );
-        editor.commit();
-        Toast.makeText(getApplicationContext(),
-                "차량 번호가 등록되었습니다.", Toast.LENGTH_LONG).show();
+        String latest_car_number = pref.getString("CarNumber", "");
+        if(car_number.equals(latest_car_number)){
+            Toast.makeText(getApplicationContext(),
+                    "현재 등록되어 있는 차량입니다.", Toast.LENGTH_LONG).show();
+        }
+        else {
+            SQLiteHelper sqh = new SQLiteHelper(this);
+        /* 과거에 등록했던 적이 있는지 확인 */
+            boolean find = false;
+            Cursor cursor = sqh.getAllDatabase(CarTable.TABLE_NAME);
+            while (cursor.moveToNext()) {
+                String old_car_number = cursor.getString(cursor.getColumnIndex(CarTable.CarNumber));
+                if (car_number.equals(old_car_number)) {
+                    find = true;
+                }
+            }
+        /* 예전에 등록된 적 없는 차량일 경우에만 DB에 추가, SharedPreferences 는 무조건 변경 */
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putString("CarNumber", car_number);
+            editor.commit();
+            if (!find) {
+                sqh.addCar(car_number, "in", 0);  // 주차장에 처음 방문해서 주차한 상태에서 차량 등록
+
+                Toast.makeText(getApplicationContext(),
+                        "차량 번호가 등록되었습니다.", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getApplicationContext(),
+                        "등록된 차량이 변경되었습니다.", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     /* 현재 등록된 차량의 입출차 로그를 보여줌 */
@@ -128,22 +164,20 @@ public class Config extends AppCompatActivity {
         datePicker = (DatePicker)findViewById(R.id.datePicker);
         datePicker.setVisibility(View.VISIBLE);
 
+        /* '일' 스피너를 지우고 '년', '월'만 선택할 수 있게 변경 */
         try{
             Field[] f = datePicker.getClass().getDeclaredFields();
-            for(int i =0; i<f.length; i++){
-                Log.d("test", f[i].getName());
-            }
             for (Field dateField : f) {
                 if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    if ("mDaySpinner".equals(dateField.getName())) {
-                        dateField.setAccessible(true);
-                        Object dayPicker = new Object();
-                        dayPicker = dateField.get(datePicker);
-                        ((View) dayPicker).setVisibility(View.GONE);
+                    int daySpinnerID = Resources.getSystem().getIdentifier("day","id","android");
+                    if(daySpinnerID != 0){
+                        View daySpinner = datePicker.findViewById(daySpinnerID);
+                        if(daySpinner != null)
+                            daySpinner.setVisibility(View.GONE);
                     }
                 }
                 else{
-                    if ("mDayPicker".equals(dateField.getName())) {
+                    if ("mDaySpinner".equals(dateField.getName())) {
                         dateField.setAccessible(true);
                         Object dayPicker = new Object();
                         dayPicker = dateField.get(datePicker);
@@ -180,6 +214,47 @@ public class Config extends AppCompatActivity {
             monthly_fare = monthly_fare + daily_fare;
         }
         Toast.makeText(getApplicationContext(), "월 합계 : " + monthly_fare, Toast.LENGTH_LONG).show();
+    }
+
+    public void ChargeMoney(View v){
+        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View textEntryView = layoutInflater.inflate(R.layout.cash_input_dialog,null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("가상머니 충전");
+        builder.setMessage("금액을 입력해주세요");
+        builder.setView(textEntryView);
+        builder.setIcon(android.R.drawable.ic_dialog_alert);
+        builder.setPositiveButton("충전", new DialogInterface.OnClickListener(){
+            @Override
+            public void onClick(DialogInterface dialog, int which){
+                String CarNumber = pref.getString("CarNumber","");
+                String url="http://13.124.74.249:3000/cars/";
+
+                EditText testText = (EditText) textEntryView.findViewById(R.id.cashInputText);
+
+                JSONObject jsonObject = new JSONObject(); // 충전할 금액을 json 형태로 서버에게 보냄
+                try {
+                    jsonObject.put("amount", Integer.parseInt(testText.getText().toString()));
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+                // Log.d("test","주소 : " + url + CarNumber + "/charge_money");
+                HttpURLConnector conn = new HttpURLConnector(url + CarNumber + "/charge_money", POST, jsonObject);
+                conn.start();
+                try{
+                    conn.join();
+                } catch(InterruptedException e){};
+
+                Toast.makeText(getApplicationContext(), testText.getText().toString()
+                        + "원이 충전되었습니다", Toast.LENGTH_LONG).show();
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener(){
+            @Override
+            public void onClick(DialogInterface dialog, int which){ }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     public void BackToStartMenu(View v){

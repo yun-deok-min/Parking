@@ -24,7 +24,7 @@ public class MyCarPosition extends AppCompatActivity {
     final static int NotFound = 1002;
     private String zone_name;
     private int zone_index;
-    private int floor = NotFound;
+    private int floor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,9 +69,7 @@ public class MyCarPosition extends AppCompatActivity {
 
         String space = String.valueOf(floor) + zone_name + String.valueOf(zone_index);
 
-        boolean find = false;
         if(floor != NotFound){
-            find = true;
             CarPosition.setText("위치 : " + space);
 
             String view_url = "http://13.124.74.249:3000/cars/" + space;
@@ -85,8 +83,7 @@ public class MyCarPosition extends AppCompatActivity {
                     break;
             }
         }
-
-        if(!find){
+        else{
             Toast.makeText(getApplicationContext(),
                     "해당 차량은 없습니다.", Toast.LENGTH_LONG).show();
         }

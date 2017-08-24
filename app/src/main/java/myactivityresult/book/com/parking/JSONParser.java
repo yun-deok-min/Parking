@@ -21,9 +21,12 @@ public class JSONParser {
     private ArrayList<Integer> entered_array;
     private ArrayList<Integer> exited_array;
 
+    final static int NotFound = 1002;
+
     public JSONParser(String dbStr){
         this.dbStr = dbStr;
         empty_space = 0;
+        floor = NotFound;
         entered_array = new ArrayList<>();
         exited_array = new ArrayList<>();
     }
@@ -42,7 +45,6 @@ public class JSONParser {
                     zone_name = json2.getString("zone_name");
                     zone_index = json2.getInt("zone_index");
                     floor = json2.getInt("floor");
-
                     break;
                 case 2:
                     empty_space = json.getInt("empty_places_count");
@@ -53,6 +55,10 @@ public class JSONParser {
             }
         } catch(JSONException e) {
             e.printStackTrace();
+            started_at = NotFound;
+            floor = NotFound;
+            empty_space = NotFound;
+            virtual_money = NotFound;
         }
     }
     public void parser_array(SharedPreferences pref){

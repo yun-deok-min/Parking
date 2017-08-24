@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.CursorAdapter;
@@ -20,6 +21,7 @@ public class TimeLogActivity extends AppCompatActivity {
     ListView logView;
     TextView visit_count_txt;
     SharedPreferences pref;
+    final static int BaseMoney = 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +39,8 @@ public class TimeLogActivity extends AppCompatActivity {
             conn.join();
         } catch(InterruptedException e){}
         JSONParser parser = new JSONParser(conn.getResult());
+        Log.d("test", "http://13.124.74.249:3000/entering_logs/" + carNumber);
+        Log.d("test",conn.getResult() );
         parser.parser_array(pref);
 
         ArrayList<Integer> entered_array = parser.getEntered_array();
@@ -67,17 +71,16 @@ public class TimeLogActivity extends AppCompatActivity {
             start.setTimeInMillis(entered_at);
             end.setTimeInMillis(end_at);
 
-            int BetweenMinute, BetweenHour;
-            BetweenHour = end.get(Calendar.HOUR) - start.get(Calendar.HOUR);
+            int BetweenMinute, BetweenSec;
+            BetweenSec = end.get(Calendar.SECOND) - start.get(Calendar.SECOND);
             BetweenMinute = end.get(Calendar.MINUTE) - start.get(Calendar.MINUTE);
 
             int fare;
-
-            if(BetweenMinute <= 30){
-                fare = 10000 * BetweenHour + 5000;  // 5000, 15000
+            if((BetweenMinute < 1) && (BetweenSec < 10)){
+                fare = BaseMoney;  // 기본요금
             }
             else{
-                fare = 10000 * (BetweenHour + 1) ;  // 10000, 20000
+                fare = BaseMoney + (int)(BetweenSec / 10) * 1000 + BetweenMinute * 6000 ;
             }
 
             String pattern = "yyyy-MM-dd";

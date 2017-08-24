@@ -127,7 +127,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         ContentValues contentvalues = new ContentValues();
         SQLiteDatabase db = getWritableDatabase();
         for(int i = 0 ; i < entered_array.size(); i++){
-            String pattern = "yyyy-MM-dd HH:mm";
+            String pattern = "yyyy-MM-dd HH:mm:ss";
             SimpleDateFormat formatter = new SimpleDateFormat(pattern);
             String entered_date = formatter.format( ((long)entered_array.get(i) * 1000L) );
             String ended_date = formatter.format( ((long)ended_array.get(i) * 1000L) );
