@@ -174,8 +174,8 @@ public class MoneyAlarmService extends Service implements Runnable{
                 int EndMinute = end.get(Calendar.MINUTE);
                 int BetweenSec = EndSec - StartSec;
                 int BetweenMinute = EndMinute - StartMinute;
-                Log.d("test", "현재 시간 - " + EndSec + ":" + EndMinute +
-                        " / 입차시간 - " + StartSec + ":" + StartMinute);
+                Log.d("test", "현재 시간 - " + EndMinute + ":" + EndSec +
+                        " / 입차시간 - " + StartMinute + ":" + StartSec);
 
                 if((BetweenMinute < 1) && (BetweenSec < 10)){
                     fare = BaseMoney;  // 기본요금

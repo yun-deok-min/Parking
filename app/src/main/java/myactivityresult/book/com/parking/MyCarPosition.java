@@ -72,16 +72,9 @@ public class MyCarPosition extends AppCompatActivity {
         if(floor != NotFound){
             CarPosition.setText("위치 : " + space);
 
-            String view_url = "http://13.124.74.249:3000/cars/" + space;
             // 서버측에서 위치정보를 받아서 차량 위치를 조감도로 보여줌
-            switch (floor){
-                case 1 :
-                    ViewMyCar.loadUrl(view_url);
-                    break;
-                case 2 :
-                    ViewMyCar.loadUrl(view_url);
-                    break;
-            }
+            String view_url = "http://13.124.74.249:3000/places/dashboard?floor=" + floor;
+            ViewMyCar.loadUrl(view_url);
         }
         else{
             Toast.makeText(getApplicationContext(),

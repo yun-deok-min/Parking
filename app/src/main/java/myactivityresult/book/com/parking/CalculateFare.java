@@ -101,6 +101,7 @@ public class CalculateFare extends AppCompatActivity {
             conn.join();
         } catch(InterruptedException e){};
         result = conn.getResult();
+        // Log.d("test", "서버에게 받은 결과 : " + result);
 
         jsonParser = new JSONParser(result);
         jsonParser.parser(1);

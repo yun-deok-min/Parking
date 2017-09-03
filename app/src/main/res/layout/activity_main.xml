@@ -34,7 +34,7 @@
             android:id="@+id/TotalSpace"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="전체 칸 : "
+            android:text="전체 칸 : 16"
             android:textAlignment="center"
             android:textSize="40dp" />
 

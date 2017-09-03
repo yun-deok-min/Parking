@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
             if(convertView == null){
                 imageView = new ImageView(mContext);
                 imageView.setLayoutParams(new GridView.LayoutParams( // 아이콘 이미지 영역 size 설정
-                        screen_rate.getX(50), screen_rate.getY(30))); // 화면 비율에 따라서 크기 조절
+                        screen_rate.getX(50), screen_rate.getX(50))); // 화면 비율에 따라서 크기 조절
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP); // 이미지 자체 size 조정 및 이동
                 imageView.setPadding(10,10,10,10);  // 상하좌우 여백
             }

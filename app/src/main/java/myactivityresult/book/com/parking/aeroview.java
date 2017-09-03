@@ -1,7 +1,9 @@
 package myactivityresult.book.com.parking;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -17,6 +19,8 @@ import java.util.ArrayList;
 public class aeroview extends AppCompatActivity {
     WebView AeroView;
     Spinner floor;
+    String url = "http://13.124.74.249:3000/places/dashboard"; // 기본 API 주소
+    int floor_num = 0; // 디폴트 값은 1층
     private boolean initSpinner = false;  // 스피너에 접근한 적이 있는지 판단
     ArrayList<String> FloorData;    // 스피너 목록 리스트
     ProgressBar progressBar;
@@ -48,7 +52,7 @@ public class aeroview extends AppCompatActivity {
         floor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id){
-                String url="http://13.124.74.249:3000/places/dashboard";  // 기본 API 주소
+                floor_num = position;
                 ProgressBarTask task;
 
                 if(initSpinner == false){  // 스피너에 처음 접근할 때 설정
@@ -81,9 +85,47 @@ public class aeroview extends AppCompatActivity {
                         "층을 다시 선택해주세요", Toast.LENGTH_SHORT).show();
             }
         });
+
+        renew_aeroview thread = new renew_aeroview();
+        thread.start();
     }
 
     public void BackToStartMenu(View v){
         finish(); // goto start_menu
+    }
+
+    /* 스피너로 재선택하지 않아도 서버에서 해당 층의 정보가 바뀌면 실시간으로 화면 갱신 */
+    class renew_aeroview extends Thread {
+        Handler handler;
+
+        renew_aeroview(){
+            handler = new Handler();
+        }
+
+        public void run(){
+            while (true) {
+                try {
+                    Thread.sleep(5000); // 화면 갱신 주기
+                } catch (InterruptedException e) {
+                    Log.d("Exception", "InterruptedException");
+                }
+
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        switch (floor_num) {
+                            case 0 :  // 1층 조감도
+                                AeroView.loadUrl(url + "?floor=1");
+                                break;
+                            case 1 :  // 2층 조감도
+                                AeroView.loadUrl(url + "?floor=2");
+                                break;
+                            default :
+                                break;
+                        }
+                    }
+                });
+            }
+        }
     }
 }

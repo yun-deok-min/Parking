@@ -30,7 +30,7 @@ public class emptySpace extends Thread {
     }
 
     public void run(){
-        Log.d("test","빈공간 파악 스레드 실행");
+        // Log.d("test","빈공간 파악 스레드 실행");
         while(isRun) {
             String url = "http://13.124.74.249:3000/empty_places_count";
             conn = new HttpURLConnector(url);
